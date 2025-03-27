@@ -1,0 +1,207 @@
+.house-detail-container {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    /* Giữ nguyên vị trí trên màn hình */
+    top: 0;
+    left: 0;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    /* Ngăn cuộn trang */
+    justify-content: space-between;
+}
+
+
+.header1 {
+    width: 100%;
+    max-width: 600px;
+    /* Định giới hạn chiều rộng */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+}
+
+.image-gallery {
+    width: 100%;
+    display: block;
+    justify-content: center;
+    gap: 5px;
+}
+
+.image-gallery img {
+    width: 45%;
+    max-height: 200px;
+    /* Giới hạn chiều cao */
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.house-info {
+    max-width: 600px;
+    /* Giới hạn chiều rộng */
+    width: 100%;
+    height: 325px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    /* Ẩn nội dung tràn */
+    word-wrap: break-word;
+    /* Đảm bảo từ không bị tràn */
+    white-space: normal;
+    /* Cho phép xuống dòng */
+
+    overflow-y: auto;
+    /* Cuộn nếu nội dung quá dài */
+    margin: 10px 0 10px 0;
+}
+
+.house-tn+ul {
+    display: flex;
+    flex-wrap: wrap;
+    /* Xuống dòng khi không đủ chỗ */
+    justify-content: space-between;
+    /* Căn đều các mục */
+    gap: 10px;
+    /* Khoảng cách giữa các mục */
+    padding: 0;
+    list-style: none;
+}
+
+.house-tn+ul li {
+    flex: 1 1 calc(33.33% - 10px);
+    /* Chia thành 3 cột, trừ khoảng cách */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+    white-space: nowrap;
+    /* Tránh xuống dòng */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.house-ti+ul {
+    display: flex;
+    flex-wrap: wrap;
+    /* Xuống dòng khi không đủ chỗ */
+    justify-content: space-between;
+    /* Căn đều các mục */
+    gap: 10px;
+    /* Khoảng cách giữa các mục */
+    padding: 0;
+    list-style: none;
+}
+
+.house-ti+ul li {
+    flex: 1 1 calc(33.33% - 10px);
+    /* Chia thành 3 cột, trừ khoảng cách */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+    white-space: nowrap;
+    /* Tránh xuống dòng */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.house-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.house-info li {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    /* Tránh tràn dòng khi nội dung quá dài */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Hiển thị dấu ... nếu bị tràn */
+}
+
+.house-info p {
+    margin: 5px 0;
+    font-size: 15px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Nếu đoạn text dài quá sẽ có dấu "..." */
+}
+
+.content-container {
+    max-width: 600px;
+    width: 100%;
+    flex: 1;
+    /* Giúp co giãn hợp lý */
+    overflow-y: auto;
+    /* Cho phép cuộn nếu nội dung dài */
+    padding-bottom: 220px;
+    /* Để không bị đè lên bản đồ */
+    overflow: hidden;
+    /* Loại bỏ cuộn ngoài */
+
+}
+
+
+.map-container {
+    width: 100%;
+    height: 150px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #ddd;
+
+}
+
+.header1 h2 {
+    font-weight: bold;
+}
+
+.image-gallery {
+    width: 100%;
+    max-width: 600px;
+    height: auto !important;
+    margin: 10px auto;
+    /* overflow: hidden; */
+    border-radius: 10px;
+
+}
+
+/* .image-gallery img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+} */
+
+/* list nội thất*/
+.noi-that-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Chia thành 2 cột */
+    gap: 10px;
+    list-style: none;
+    /* Bỏ dấu chấm mặc định của ul */
+    padding: 0;
+    /* Bỏ padding mặc định của ul */
+}
+
+.noi-that-item {
+    flex: 1 1 calc(50% - 10px);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}

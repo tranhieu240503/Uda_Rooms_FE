@@ -1,0 +1,45 @@
+html {
+  background-color: #f9f9f9;
+}
+
+/* Reset một số kiểu mặc định của trình duyệt */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Định dạng cho toàn bộ body */
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-text-size-adjust: none;
+  background: #f4f4f4;
+  position: relative;
+  color: #2e2a2a;
+  font-family: "Inter", sans-serif;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 2;
+  /* Chiếm toàn bộ chiều cao màn hình */
+
+  /* Sử dụng Flexbox để căn giữa #root */
+  display: flex;
+  justify-content: center;
+  /* Căn giữa theo chiều ngang */
+  align-items: center;
+  /* Căn giữa theo chiều dọc */
+}
+
+/* Mô phỏng kích thước của iPhone 14 Pro Max */
+#root {
+  width: 100%;
+  /* Đặt chiều rộng theo tỷ lệ phần trăm */
+  /* Giới hạn chiều rộng tối đa tương đương với kích thước của iPhone 14 Pro Max */
+  height: 100%;
+  /* Đặt chiều cao theo tỷ lệ phần trăm */
+  /* Giới hạn chiều cao tối đa */
+  position: relative;
+  background-color: white;
+}

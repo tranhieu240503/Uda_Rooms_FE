@@ -1,0 +1,111 @@
+.map {
+    width: 100%;
+    height: 100vh; /* Trừ chiều cao của header */
+    overflow: hidden;  /* Đảm bảo không có thanh cuộn trên map */
+  }
+@media screen and (max-width: 480px) {
+    .map {
+        width: 100%;
+        height: 100vh;
+    }
+}
+
+
+
+
+
+
+.leaflet-popup-content-wrapper .popup-school {
+    max-width: 220px;
+    background-color: #eaf6ff;
+    border-radius: 10px;
+    padding: 8px;
+}
+
+.leaflet-popup-content.popup-school b {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+
+
+
+.popup-container {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center;
+    text-align: center; */
+}
+
+.popup-container h2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+
+.popup-image {
+    width: 100%;
+    /* height: 40%; */
+    margin-bottom: 10px;
+}
+
+.popup-university h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #194c41;
+}
+
+
+
+.popup-info p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.popup-info i {
+    margin-right: 5px;
+    color: #194c41;
+}
+
+.popup-info a {
+    color: #194c41;
+    text-decoration: none;
+}
+
+.popup-info a:hover {
+    text-decoration: underline;
+}
+
+.custom-div-icon {
+    width: 60px;
+    /* Thay đổi kích thước hình ảnh */
+    height: 60px;
+    /* Thay đổi kích thước hình ảnh */
+    border-radius: 50%;
+    /* Làm tròn hình ảnh */
+    object-fit: cover;
+    /* Đảm bảo hình ảnh không bị vỡ */
+}
+
+.custom-div-iconxanh {
+    width: 60px;
+    /* Thay đổi kích thước hình ảnh */
+    height: 60px;
+    /* Thay đổi kích thước hình ảnh */
+    border-radius: 50%;
+    /* Làm tròn hình ảnh */
+    object-fit: cover;
+    /* Đảm bảo hình ảnh không bị vỡ */
+    font-size: 20px;
+}
+
+.custom-div-iconuni {
+    border-radius: 50%;
+    /* Làm tròn hình ảnh */
+    object-fit: cover;
+    /* Đảm bảo hình ảnh không bị vỡ */
+}

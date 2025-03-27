@@ -1,0 +1,274 @@
+import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useSwipeable } from "react-swipeable";
+import { jwtDecode } from "jwt-decode";
+
+import {
+  faMagnifyingGlass,
+  faList,
+  faComments,
+  faSignInAlt,
+  faHouseChimney,
+  faUserPlus,
+  faSignOutAlt,
+  faArrowLeft,
+} from "@fortawesome/free-solid-svg-icons";
+import "../Header/Header.css";
+import Filter from "../../Filter/Filter";
+import Survey from "../../Survey/Survey";
+import Login from "../../Login/Login";
+import Signup from "../../Signup/Signup";
+import useIsMobile from "../../hook/useIsMobile";
+import Image from "../../CustomImage/CustomImage";
+import Avatar from "../../images/avatar.jpg";
+import { useNavigate } from "react-router-dom";
+import Profile from "../../Profile/Profile";
+
+const API_URL = "http://localhost:8000";
+
+const Header = ({
+  isInnerVisible,
+  onSearchClick,
+  onReset,
+  onFilter,
+  showModal,
+  onInner,
+}) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeContent, setActiveContent] = useState("Filter");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [userAvatar, setUserAvatar] = useState(null);
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
+
+  // Add click handler for content area
+  const handleContentClick = () => {
+    setIsMenuOpen(false); // Close menu when clicking content
+  };
+
+  // Function to refresh user info from token
+  const refreshUserInfo = () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const decodedUser = jwtDecode(token);
+        setFullName(decodedUser.fullname);
+        setUserAvatar(decodedUser.avatar);
+        setIsLoggedIn(true);
+        console.log("Decoded user:", decodedUser);
+        console.log("userAvatar:", decodedUser.avatar);
+        console.log("fullName:", decodedUser.fullname);
+      } catch (error) {
+        console.error("Token decoding error:", error);
+        setIsLoggedIn(false);
+        localStorage.removeItem("token");
+      }
+    } else {
+      setIsLoggedIn(false);
+    }
+  };
+
+  // Check login status when component mounts
+  useEffect(() => {
+    refreshUserInfo();
+  }, []);
+
+  // Refresh user info when activeContent changes
+  useEffect(() => {
+    if (activeContent === "Filter") {
+      refreshUserInfo();
+    }
+  }, [activeContent]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    navigate("/");
+    window.location.reload();
+  };
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (isInnerVisible && isMobile) {
+        onReset();
+      }
+    },
+    onSwipedRight: () => {
+      if (!isInnerVisible && isMobile) {
+        onInner();
+      }
+    },
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: isMobile,
+    trackTouch: true,
+    delta: 50,
+    swipeDuration: 500,
+  });
+  const mobileProps = isMobile ? handlers : {};
+
+  useEffect(() => {
+    if (!isInnerVisible) {
+      setIsMenuOpen(false);
+    }
+  }, [isInnerVisible]);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleReset = () => {
+    if (onReset) {
+      onReset();
+    }
+  };
+
+  const handleContentChange = (content) => {
+    setActiveContent(content);
+    setIsMenuOpen(false);
+  };
+
+  const handleCloseSurvey = () => {
+    setActiveContent("Filter");
+  };
+
+  const handleCloseLogin = () => {
+    setActiveContent("Filter");
+  };
+
+  const handleCloseSignup = () => {
+    setActiveContent("Filter");
+  };
+
+  const handleCloseProfile = () => {
+    setActiveContent("Filter");
+    refreshUserInfo(); // Làm mới thông tin người dùng khi đóng Profile
+  };
+
+  const handleAvatarUpdate = (newAvatar) => {
+    setUserAvatar(newAvatar);
+  };
+
+  const handleUserUpdate = (updatedUserData) => {
+    setFullName(updatedUserData.fullname);
+    setUserAvatar(updatedUserData.avatar);
+  };
+
+  // Loại bỏ dấu / thừa trong userAvatar
+  const getAvatarUrl = (avatarPath) => {
+    if (!avatarPath) return "";
+    // Loại bỏ dấu / ở đầu nếu có
+    const cleanPath = avatarPath.startsWith("/") ? avatarPath.slice(1) : avatarPath;
+  
+    return `${API_URL}/${cleanPath}`;
+  };
+
+  return (
+    <div
+      {...mobileProps}
+      className={`inner ${isInnerVisible ? "visible" : "hidden"}`}
+    >
+      <header className="header">
+        <div className="logo-list" onClick={toggleMenu}>
+          <FontAwesomeIcon icon={faList} />
+        </div>
+        <div className="logo">
+          <img src="images/UDA_logo.png" alt="Logo" />
+          <div className="text">
+            <h3 className="text-1">UDA MAP</h3>
+            <h4 className="tex-2">Bản đồ phòng trọ sinh viên UDA</h4>
+          </div>
+        </div>
+        <div
+          onClick={() => handleContentChange("Filter")}
+          className="logo-find"
+        >
+          <FontAwesomeIcon icon={faMagnifyingGlass} />
+        </div>
+
+        <div className="logo-left" onClick={handleReset}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </div>
+
+        <div className={`menu ${isMenuOpen ? "open" : ""}`}>
+          <ul>
+            <li onClick={() => handleContentChange("Survey")}>
+              <FontAwesomeIcon icon={faHouseChimney} className="menu-icon" />
+              <span>Giới thiệu phòng trọ</span>
+            </li>
+            <li>
+              <FontAwesomeIcon icon={faComments} className="menu-icon" />
+              <span>Diễn đàn</span>
+            </li>
+
+            {!isLoggedIn ? (
+              <>
+                <li onClick={() => handleContentChange("Login")}>
+                  <FontAwesomeIcon icon={faSignInAlt} className="menu-icon" />
+                  <span>Đăng nhập</span>
+                </li>
+                <li onClick={() => handleContentChange("Signup")}>
+                  <FontAwesomeIcon icon={faUserPlus} className="menu-icon" />
+                  <span>Đăng ký</span>
+                </li>
+              </>
+            ) : (
+              <>
+                <li onClick={() => handleContentChange("Profile")}>
+                  {userAvatar ? (
+                    <Image
+                      src={getAvatarUrl(userAvatar)}
+                      alt="Profile"
+                      className="user-avatar"
+                      onError={(e) => {
+                        console.log("Lỗi tải ảnh:", e);
+                        e.target.src = Avatar;
+                      }}
+                    />
+                  ) : (
+                    <Image
+                      src={Avatar}
+                      alt="Default Avatar"
+                      className="user-avatar"
+                    />
+                  )}
+                  <span>{fullName || "Loading..."}</span>
+                </li>
+                <li onClick={handleLogout}>
+                  <FontAwesomeIcon icon={faSignOutAlt} className="menu-icon" />
+                  <span>Đăng xuất</span>
+                </li>
+              </>
+            )}
+          </ul>
+        </div>
+      </header>
+      <div className="content_list" onClick={handleContentClick}>
+        {activeContent === "Filter" && (
+          <Filter onReset={onReset} onFilter={onFilter} />
+        )}
+
+        {activeContent === "Survey" && (
+          <Survey onCloseSurvey={handleCloseSurvey} showModal={showModal} />
+        )}
+
+        {activeContent === "Login" && <Login onCloseLogin={handleCloseLogin} />}
+        {activeContent === "Signup" && (
+          <Signup onCloseSignup={handleCloseSignup} />
+        )}
+
+        {activeContent === "Profile" && (
+          <Profile
+            onCloseProfile={handleCloseProfile}
+            onAvatarUpdate={handleAvatarUpdate}
+            onUserUpdate={handleUserUpdate}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Header;
