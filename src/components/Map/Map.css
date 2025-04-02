@@ -31,19 +31,25 @@
 
 
 
-.popup-container {
+/* .popup-container {
     display: flex;
     flex-direction: column;
-    /* align-items: center;
-    text-align: center; */
-}
+    align-items: center;
+    text-align: center; 
+ } */
 
-.popup-container h2 {
+/* .popup-container h2 {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+} */
+.popup-tienich{
+    width: 212px;
+    font-size: 12px;
 }
+
+
 
 
 .popup-image {

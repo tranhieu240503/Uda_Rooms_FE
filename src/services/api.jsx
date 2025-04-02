@@ -1,6 +1,6 @@
 import axios from "axios";
-const API_URL = "http://localhost:8000";
-// const API_URL = "https://e4cd-117-2-242-166.ngrok-free.app";
+const API_URL = process.env.REACT_APP_API_URL;
+// const API_URL = "https://bbfc-2405-4802-9603-89b0-3187-b0e5-aa4a-cb59.ngrok-free.app";
 
 // Hàm lấy dữ liệu nhà trọ từ API
 export const fetchLocations = async () => {
@@ -29,7 +29,7 @@ export const getHouseDetail = async (id) => {
     });
     console.log(room);
     return room;
-  } catch (error) { }
+  } catch (error) {}
 };
 
 //call api lấy hình ảnh
@@ -52,41 +52,34 @@ export const fetchImage = async (Id) => {
     }
 
     // Fetch từng ảnh và tạo blob URLs
-    const imageBlobUrls = await Promise.all(
+    const imageUrls = await Promise.all(
       data.map(async (item) => {
         if (!item.hinhAnh) return null;
-
-        // Thêm /uploads/ vào trước tên file
-        let path = `/uploads/${item.hinhAnh.trim()}`;
-
-        const imgRes = await fetch(`${API_URL}${path}`, {
-          headers: {
-            "ngrok-skip-browser-warning": "true",
-          },
-        });
-
-        if (!imgRes.ok) {
-          console.warn("⚠️ Không tải được ảnh:", path);
-          return null;
-        }
-
-        const blob = await imgRes.blob();
-        return URL.createObjectURL(blob);
+    
+        let filename = item.hinhAnh.trim(); // Tên file
+        let path = `/uploads/${filename}`;
+    
+        // Trả về URL gốc của ảnh từ API backend
+        return { filename, url: `${API_URL}${path}` };
       })
     );
-
-    return imageBlobUrls.filter((url) => url !== null);
+    
+    return imageUrls.filter((url) => url !== null);
+    
   } catch (error) {
     console.error("🔥 Lỗi khi fetchImage:", error);
     return [];
   }
 };
+
 // Hàm tìm tọa độ từ địa chỉ
 export const fetchFind = async (formData) => {
   try {
     // Ép kiểu dữ liệu của TienNghi thành số
     if (Array.isArray(formData.TienNghi)) {
-      formData.TienNghi = formData.TienNghi.map(id => parseInt(id)).filter(id => !isNaN(id));
+      formData.TienNghi = formData.TienNghi.map((id) => parseInt(id)).filter(
+        (id) => !isNaN(id)
+      );
     }
 
     console.log("Dữ liệu gửi lên API:", JSON.stringify(formData, null, 2));
@@ -144,7 +137,6 @@ export const fetchThongTinThem = async (Id) => {
   }
 };
 
-
 // Hàm gọi thông tin tiện ích
 export const fetchTienIch = async () => {
   try {
@@ -154,13 +146,26 @@ export const fetchTienIch = async () => {
       },
     });
     const data = await response.json();
-    console.log(data)
+    console.log(data);
     return data;
   } catch (error) {
     console.log(error);
   }
 };
-
+export const fetchTienIchAll = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/tien-ich-all`, {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // Hàm gọi thông tin tiện ích
 export const fetchTienIchXungQuanh = async (toado) => {
@@ -174,7 +179,7 @@ export const fetchTienIchXungQuanh = async (toado) => {
         },
       }
     );
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", res)
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", res);
     return res.data;
   } catch (err) {
     console.error("Lỗi gọi API tiện ích xung quanh:", err);
@@ -182,16 +187,18 @@ export const fetchTienIchXungQuanh = async (toado) => {
   }
 };
 
-
-
 export const fetchGuiDanhGia = async (id, danhGiaData) => {
   try {
-    const response = await axios.post(`${API_URL}/api/danh-gia/${id}`, danhGiaData, {
-      headers: {
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true",
-      },
-    });
+    const response = await axios.post(
+      `${API_URL}/api/danh-gia/${id}`,
+      danhGiaData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
 
     return response.data; // Trả về dữ liệu phản hồi từ server
   } catch (error) {
@@ -209,7 +216,7 @@ export const fetchDanhGia = async (id) => {
     });
     console.log("danh giaaaaaaaaaaaaaaaaaaaaaaaaaaaa", room);
     return room;
-  } catch (error) { }
+  } catch (error) {}
 };
 export const handleDuyetAPI = async (id) => {
   try {
@@ -219,15 +226,38 @@ export const handleDuyetAPI = async (id) => {
       // Nếu thành công, bạn có thể làm mới lại dữ liệu hoặc cập nhật lại state
       console.log("Trạng thái đã được cập nhật!");
       // Giả sử bạn có một hàm để reload lại dữ liệu
-      return response
+      return response;
     }
   } catch (error) {
     console.error("Lỗi khi duyệt hoặc hủy duyệt:", error);
   }
-}
+};
+
+export const customTienIchXungQuanh = async (id, formData) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/api/chinh-sua-tien-ich-xung-quanh/${id}`,
+      formData
+    );
+
+    if (response.status === 200) {
+      console.log("Cập nhật thành công:", response.data);
+      return response.data; // Trả về dữ liệu đã cập nhật
+    } else {
+      console.warn("Cập nhật thất bại:", response);
+      return null; // Trả về null nếu thất bại
+    }
+  } catch (error) {
+    console.error("Lỗi khi cập nhật nhà trọ:", error);
+    throw error; // Ném lỗi để có thể bắt bên ngoài
+  }
+};
 export const customroom = async (id, formData) => {
   try {
-    const response = await axios.put(`${API_URL}/api/update-nha-tro/${id}`, formData);
+    const response = await axios.put(
+      `${API_URL}/api/update-nha-tro/${id}`,
+      formData
+    );
 
     if (response.status === 200) {
       console.log("Cập nhật thành công:", response.data);
@@ -266,7 +296,7 @@ export const postLogin = async (formData) => {
 
 export const postSignup = async (formData) => {
   try {
-    console.log(formData)
+    console.log(formData);
     const response = await axios.post(
       `${API_URL}/api/auth/register`,
       formData,
@@ -288,5 +318,179 @@ export const postSignup = async (formData) => {
   } catch (error) {
     console.error("API Error:", error);
     throw error;
+  }
+};
+export const DeleteImage = async (nhaTroId, hinhAnh) => {
+  try {
+    const response = await fetch(`${API_URL}/api/delete-img`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nhaTroId, hinhAnh }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      alert("Xóa ảnh thành công!");
+    } else {
+      alert(data.error);
+    }
+  } catch (error) {
+    console.error("Lỗi khi xóa ảnh:", error);
+  }
+};
+export const addTienNghi = async (tenTienNghi) => {
+  try {
+    const response = await axios.post(`${API_URL}/api/them-tien-nghi`, {
+      tenTienNghi,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi thêm tiện nghi:", error);
+    throw error;
+  }
+};
+
+export const addTienIchXungQuanh = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/tao-tien-ich-xung-quanh`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
+
+    // Kiểm tra xem API có trả về dữ liệu hay không
+    if (response && response.data) {
+      return response.data; // Trả về dữ liệu mới tạo
+    }
+
+    throw new Error("Không nhận được phản hồi hợp lệ từ API");
+  } catch (error) {
+    console.error("❌ Lỗi khi thêm tiện ích xung quanh:", error);
+    throw error.response?.data || error;
+  }
+};
+
+export const addTienIch = async (tenTienIch) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/tao-tien-ich`,
+      tenTienIch
+    );
+    return response; // ⚡ Trả về toàn bộ response thay vì chỉ data
+  } catch (error) {
+    console.error("Lỗi khi thêm tiện ích:", error);
+    throw error;
+  }
+};
+
+// 🔴 Xóa tiện nghi theo ID
+export const deleteTienNghi = async (id) => {
+  try {
+    await axios.delete(`${API_URL}/api/xoa-tien-nghi/${id}`);
+    return true;
+  } catch (error) {
+    console.error("Lỗi khi xóa tiện nghi:", error);
+    return false;
+  }
+};
+export const addThongTinThem = async (thongTin) => {
+  try {
+    console.log(thongTin);
+    const response = await axios.post(`${API_URL}/api/them-thong-tin`, {
+      thongTinThem: thongTin,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi thêm Thông Tin Thêm:", error);
+    return null;
+  }
+};
+
+// 🔴 Xóa Thông Tin Thêm theo ID
+export const deleteThongTinThem = async (id) => {
+  try {
+    await axios.delete(`${API_URL}/api/xoa-thong-tin/${id}`);
+    return true;
+  } catch (error) {
+    console.error("Lỗi khi xóa Thông Tin Thêm:", error);
+    return false;
+  }
+};
+export const deleteNhaTro = async (id) => {
+  try {
+    const response = await axios.delete(`${API_URL}/api/xoa-nha-tro/${id}`);
+    return response; // Trả về response đầy đủ
+  } catch (error) {
+    console.error("Lỗi khi xóa Nhà Trọ:", error);
+    return null; // Trả về null nếu có lỗi
+  }
+};
+export const deleteTienIch = async (id) => {
+  try {
+    const response = await axios.delete(`${API_URL}/api/xoa-tien-ich/${id}`);
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi xóa tiện ích:", error);
+    throw error;
+  }
+};
+export const deleteTienIchXungQuanh = async (id) => {
+  try {
+    const response = await axios.delete(
+      `${API_URL}/api/xoa-tien-ich-xung-quanh/${id}`
+    );
+    console.log(response);
+
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi xóa tiện ích:", error);
+    throw error;
+  }
+};
+// tao-tien-ich-xung-quanh xoa-tien-ich-xung-quanh
+
+export const fetchPostAll = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/api/all`, {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+    console.log(response.data);
+    // console.log("tiennghi: ", response.data)
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu:", error);
+    return [];
+  }
+};
+
+export const handleDuyetPostAPI = async (id) => {
+  try {
+    // Gửi API để thay đổi trạng thái
+    const response = await axios.put(`${API_URL}/api/post/duyet/${id}`);
+    if (response.status === 200) {
+      // Nếu thành công, bạn có thể làm mới lại dữ liệu hoặc cập nhật lại state
+      console.log("Trạng thái đã được cập nhật!");
+      // Giả sử bạn có một hàm để reload lại dữ liệu
+      return response;
+    }
+  } catch (error) {
+    console.error("Lỗi khi duyệt hoặc hủy duyệt:", error);
+  }
+};
+export const deletePost = async (id) => {
+  try {
+    const response = await axios.delete(`${API_URL}/api/delete/${id}`);
+    return response; // Trả về response đầy đủ
+  } catch (error) {
+    console.error("Lỗi khi xóa Nhà Trọ:", error);
+    return null; // Trả về null nếu có lỗi
   }
 };

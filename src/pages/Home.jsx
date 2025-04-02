@@ -11,21 +11,26 @@ import {
   faCaretRight,
   faClose,
 } from "@fortawesome/free-solid-svg-icons";
+import Modal from "../components/Modal/Modal";
 
 const Home = () => {
-  const [isInnerVisible, setIsInnerVisible] = useState(true);
+  const [isInnerVisible, setIsInnerVisible] = useState(
+    window.innerWidth > 768 // Mặc định true nếu màn hình lớn hơn 768px (desktop), false nếu nhỏ hơn (mobile)
+  );
   const [filteredData, setFilteredData] = useState([]);
   const [houses, setHouses] = useState([]);
   const [coordinates, setCoordinates] = useState([]);
   const [showRouting, setShowRouting] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null); // Dữ liệu phòng trọ được chọn
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const showModal = () => {
-    setIsModalVisible(true);
+
+  const showModalOne = () => {
+    setIsModalVisible(false); // Đặt trạng thái về false
     setTimeout(() => {
-      setIsModalVisible(false);
-    }, 4000);
+      setIsModalVisible(true); // Đặt lại trạng thái về true
+    }, 50); // Đặt timeout ngắn để đảm bảo React nhận ra sự thay đổi
   };
+
   const hideModal = () => {
     setIsModalVisible(false);
   };
@@ -60,26 +65,25 @@ const Home = () => {
     setIsInnerVisible(true);
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsInnerVisible(window.innerWidth > 768); // Cập nhật khi thay đổi kích thước màn hình
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div className="home_wrapper">
       {isModalVisible && (
-        <div className="modal">
-          <div className="modal_content">
-            <button className="icon_close" onClick={hideModal}>
-              <FontAwesomeIcon className="" icon={faClose} />
-            </button>
-            <div className="modal_header">
-              <FontAwesomeIcon className="check_circle" icon={faCircleCheck} />
-            </div>
-            <div className="modal_body">
-              <p className="modal_desc">Đã gửi thông tin thành công</p>
-              <p className="modal_note">
-                Thông tin của bạn sẽ được up lên sau khi được <br />
-                admin kiểm duyệt.
-              </p>
-            </div>
-          </div>
-        </div>
+        <Modal
+          desc="Đã gửi thông tin thành công"
+          note="Thông tin của bạn sẽ được up lên sau khi được admin kiểm duyệt."
+          onClose={hideModal}
+        />
       )}
 
       {!showRouting ? (
@@ -97,7 +101,7 @@ const Home = () => {
             isInnerVisible={isInnerVisible}
             onReset={resetInner}
             onFilter={handleFilter}
-            showModal={showModal}
+            showModalOne={showModalOne}
           />
           <Map
             houses={houses}

@@ -1,0 +1,962 @@
+@charset "UTF-8";
+.forum {
+  position: relative;
+}
+.forum::-webkit-scrollbar {
+  width: 8px;
+}
+.forum::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+.forum::-webkit-scrollbar-thumb {
+  background: #00b63e;
+  border-radius: 10px;
+}
+.forum::-webkit-scrollbar-thumb:hover {
+  background: #00832d;
+}
+
+.header_forum-main {
+  background-color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  width: 80%;
+  left: 0;
+  margin: 0 auto;
+  right: 0;
+  height: 60px;
+  z-index: 9999999;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng */
+}
+
+.header_forum-title {
+  color: #fff;
+}
+
+.header_forum-logo {
+  width: 57px;
+  height: 47px;
+  cursor: pointer;
+  margin-left: 50px;
+}
+
+.header_background {
+  padding-top: 50%;
+  position: relative;
+}
+
+.icon_left {
+  color: #fff;
+  width: 28px;
+  margin-right: 50px;
+  height: 24px;
+  background-color: #2b9550;
+  padding: 7px 5px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(43, 149, 80, 0.5);
+}
+
+.icon_left-one {
+  display: none;
+}
+
+.header_forum-direc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header_forum-title {
+  margin-bottom: 0rem;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.header_forum-desc {
+  margin-bottom: 9px;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.header_title {
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin-bottom: 0rem;
+  padding: 6px 11px 0px;
+}
+
+.header_subtitle {
+  padding: 0 11px 0;
+  color: #7d6464;
+  margin-bottom: 0rem;
+  font-size: 1.2rem;
+}
+
+.seperate {
+  height: 1px;
+  width: 100%;
+  background-color: #ccc;
+}
+
+.img_content {
+  width: 40px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.post_content {
+  padding-left: 10px;
+  padding-top: 7px;
+}
+
+.post_content {
+  display: flex;
+  gap: 0 10px;
+}
+
+.post_heading {
+  background-color: rgba(204, 204, 204, 0.1);
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  padding: 0px 12px;
+  gap: 25px;
+  font-weight: 600;
+}
+
+.post_title {
+  margin-top: 1rem;
+}
+
+.forum_inner-content {
+  display: flex;
+  gap: 0 8px;
+  margin-top: 6px;
+  position: relative;
+  align-items: center;
+  padding-left: 11px;
+}
+
+.forum-sub-heading {
+  font-size: 1.4rem;
+  margin-top: 5px;
+  font-weight: 600;
+  margin-bottom: 0rem;
+}
+
+.forum-sub-time {
+  margin-bottom: 0rem;
+  font-size: 1.1rem;
+  color: #696868;
+}
+
+.forum_inner-sub {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+
+.title_form {
+  margin-bottom: 0;
+  padding-left: 13px;
+  font-weight: 400;
+  color: #000;
+  font-size: 1.3rem;
+}
+
+.content_img-form {
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.btn-all_sign {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn {
+  display: flex;
+  padding: 7px 18px;
+  background: transparent;
+  font-size: 1.4rem;
+  align-items: center;
+  gap: 0 7px;
+  color: #7e7b7b;
+  cursor: pointer;
+}
+.btn:hover {
+  background-color: rgba(0, 182, 62, 0.1);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn.btn-liked {
+  color: #00b63e;
+}
+
+.icon_btn {
+  margin-top: -2.6px;
+}
+
+.icon_btn {
+  font-size: 1.6rem;
+  transition: color 0.2s ease;
+}
+.icon_btn.icon-liked {
+  color: #00b63e;
+}
+
+.input_content {
+  width: 100%;
+}
+
+.post-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.post-form-overlay.active {
+  opacity: 1;
+  display: flex;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.post-form {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px 12px 0 0;
+  padding: 20px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.post-form.active {
+  transform: translateY(0);
+}
+.post-form .post-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 12px;
+}
+.post-form .post-form-header h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+.post-form .post-form-header .close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+}
+.post-form .post-form-header .close-btn:hover {
+  color: #333;
+}
+.post-form .user-info {
+  display: flex;
+  position: relative;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+.post-form .user-info .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.post-form .user-info .user-name {
+  font-weight: 500;
+}
+.post-form .post-input {
+  width: 100%;
+  border: none;
+  resize: none;
+  font-size: 1.6rem;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f0f2f5;
+}
+.post-form .post-input:focus {
+  outline: none;
+}
+.post-form .post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.post-form .post-actions .add-photo {
+  padding: 6px 6px;
+  border-radius: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f0f2f5;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.post-form .post-actions .add-photo:hover {
+  background-color: #e4e6e9;
+}
+.post-form .post-actions .add-photo .file-input {
+  display: none;
+}
+.post-form .post-actions .add-photo svg {
+  font-size: 1.6rem;
+  color: #00b63e;
+}
+.post-form .post-actions .add-photo span {
+  color: #666;
+  font-size: 1.4rem;
+}
+.post-form .post-actions .submit-post {
+  padding: 4px 24px;
+  border-radius: 11px;
+  font-weight: 700;
+  border: none;
+  background: #00b63e;
+  color: white;
+  cursor: pointer;
+}
+.post-form .post-actions .submit-post:hover {
+  background: #009d35;
+}
+
+.comment-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+.comment-overlay.active {
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+}
+
+.comment-section {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px 12px 0 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.comment-section.active {
+  transform: translateY(0);
+}
+
+.comment-header {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.comment-header h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+.comment-header .close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+}
+.comment-header .close-btn:hover {
+  color: #333;
+}
+
+.comments-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 15px 15px 0 15px;
+}
+
+.comment-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.comment-item .comment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-top: 3px;
+}
+.comment-item .comment-content {
+  background: #f0f2f5;
+  padding: 8px 12px;
+  border-radius: 18px;
+  flex: 1;
+}
+.comment-item .comment-content .comment-author {
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+.comment-item .comment-content .comment-text {
+  font-size: 1.4rem;
+  margin-bottom: 0rem;
+  max-width: 100%;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.comment-input-section {
+  padding: 15px;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.comment-input-section .comment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+.comment-input-section .comment-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f0f2f5;
+  border-radius: 20px;
+  padding: 8px 15px;
+}
+.comment-input-section .comment-input-wrapper .comment-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1.4rem;
+}
+.comment-input-section .comment-input-wrapper .comment-input:focus {
+  outline: none;
+}
+.comment-input-section .comment-input-wrapper .send-comment {
+  background: none;
+  border: none;
+  color: #00b63e;
+  cursor: pointer;
+  padding: 5px;
+}
+.comment-input-section .comment-input-wrapper .send-comment:hover {
+  color: #00832d;
+}
+
+.images-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.image-container {
+  position: relative;
+  width: calc(33.33% - 7px);
+}
+.image-container .img_post {
+  width: 100%;
+  height: 150px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 7px;
+}
+.image-container .remove-image-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #fff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  z-index: 2;
+}
+.image-container .remove-image-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.list {
+  height: 29px;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  width: 41%;
+  justify-content: space-between;
+  position: relative;
+  border-radius: 4px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+}
+
+.list::before {
+  content: "";
+  width: 100%;
+  height: 9px;
+  position: absolute;
+  top: 98%;
+  left: 0;
+  border-radius: 8px;
+  background-color: transparent;
+}
+
+.list_title {
+  color: #000;
+  margin-left: 4px;
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+.list_inner {
+  position: absolute;
+  width: 100%;
+  top: 110%;
+  display: none;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  background-color: #fff;
+  z-index: 999;
+}
+
+.inner_spacer {
+  display: flex;
+  padding: 0px 8px;
+  border-bottom: 1px solid #ccc;
+  align-items: center;
+}
+
+.inner_spacer:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+}
+
+.inner_title {
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  margin-left: 4px;
+}
+
+.inner_radio {
+  width: 1.5rem;
+  cursor: pointer;
+}
+
+.list:hover .list_inner {
+  display: block;
+}
+
+.down {
+  position: absolute;
+  right: 4%;
+  font-size: 1.2rem;
+  top: 28.6%;
+}
+
+.search-btn {
+  background: transparent;
+}
+
+.post-images-slider {
+  overflow-x: auto; /* Cho phép cuộn ngang */
+  -webkit-overflow-scrolling: touch; /* Hỗ trợ cuộn mượt trên iOS */
+  position: relative;
+}
+
+.slider-container {
+  display: flex;
+  gap: 10px; /* Khoảng cách giữa các ảnh */
+  overflow-x: auto; /* Cho phép cuộn ngang */
+  scroll-behavior: smooth; /* Cuộn mượt */
+  -webkit-overflow-scrolling: touch; /* Hỗ trợ cuộn mượt trên iOS */
+}
+
+.slider-wrapper {
+  display: flex;
+  gap: 10px; /* Khoảng cách giữa các ảnh */
+  width: 100%;
+}
+
+.content_img-form {
+  flex: 0 0 auto; /* Đảm bảo mỗi ảnh có kích thước cố định */
+  width: 80%; /* Chiều rộng ảnh (có thể điều chỉnh) */
+  height: 200px; /* Chiều cao cố định */
+  -o-object-fit: cover;
+     object-fit: cover; /* Đảm bảo ảnh không bị méo */
+  border-radius: 8px;
+}
+
+.slider-wrapper > .content_img-form:only-child {
+  width: 100% !important; /* Chiếm toàn bộ chiều rộng */
+}
+
+.slider-btn {
+  display: none; /* Ẩn nút Next và Prev */
+}
+
+.post-images-slider {
+  position: relative;
+  width: 100%;
+  overflow: hidden; /* Ẩn các phần tử vượt ra ngoài */
+}
+
+.delete-comment-btn {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 2px 5px;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 70px;
+}
+.delete-comment-btn:hover {
+  background: #d9363e;
+}
+
+.delete-post-btn {
+  padding: 2px 6px;
+  font-size: 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  position: absolute;
+  right: 2%;
+  top: 3%;
+}
+.delete-post-btn:hover {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+.no-posts_desc {
+  margin-bottom: 0rem;
+  margin: 22px auto;
+  font-size: 1.9rem;
+  text-align: center;
+  line-height: 2.8rem;
+}
+
+.image-fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8); /* Nền tối */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999999999;
+}
+
+.image-fullscreen {
+  max-width: 90%;
+  max-height: 90%;
+  -o-object-fit: contain;
+     object-fit: contain; /* Đảm bảo ảnh không bị méo */
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.prev-btn,
+.next-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  z-index: 9999999999999;
+}
+
+.prev-btn {
+  left: 10px;
+}
+
+.next-btn {
+  right: 10px;
+}
+
+@media screen and (max-width: 480px) {
+  .forum {
+    max-height: 100vh;
+  }
+  .header_forum-main {
+    width: 100%;
+  }
+  .header_forum-direc {
+    align-items: baseline;
+  }
+  .icon_left {
+    display: none;
+  }
+  .icon_left-one {
+    color: #fff;
+    width: 28px;
+    margin-left: 19px;
+    margin-right: 35px;
+    height: 24px;
+    background-color: #2b9550;
+    display: block;
+    padding: 7px 5px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(43, 149, 80, 0.5);
+  }
+  .header_forum-logo {
+    margin-left: 0px;
+  }
+  .header_forum-main {
+    justify-content: unset;
+  }
+  .forum_push-up {
+    position: fixed;
+    border: 1px solid #fff;
+    z-index: 99999;
+    padding: 1px 23px;
+    color: #fff;
+    background: transparent;
+    border-radius: 7px;
+    bottom: 70px;
+    height: 35px;
+    right: 22px;
+  }
+  .forum_push-up:hover {
+    transform: scale(1.1);
+  }
+}
+@media screen and (min-width: 1024px) {
+  .forum {
+    max-width: 80%;
+    margin: 0 auto;
+    overflow-y: auto;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  .forum_background {
+    background-color: aliceblue;
+    position: relative;
+  }
+  .forum_push-up {
+    position: fixed;
+    border: 1px solid;
+    padding: 1px 23px;
+    background: transparent;
+    border-radius: 7px;
+    bottom: 40px;
+    height: 35px;
+    right: 20px;
+  }
+  .forum_push-up:hover {
+    transform: scale(1.1);
+  }
+  .header_background {
+    padding-top: 34%;
+    position: relative;
+  }
+  .header_title {
+    font-size: 2.4rem;
+    text-align: center;
+  }
+  .header_subtitle {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+  .post_content {
+    padding: 6px 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .post_heading {
+    font-size: 1.7rem;
+  }
+  .forum_inner-content {
+    gap: 15px;
+  }
+  .title_form {
+    font-size: 1.6rem;
+    padding-left: 13px;
+    white-space: normal; /* Cho phép xuống dòng */
+    word-wrap: break-word; /* Tự động xuống dòng khi từ quá dài */
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  .btn {
+    font-size: 1.6rem; /* Tăng kích thước chữ */
+    padding: 10px 20px; /* Tăng khoảng cách bên trong */
+  }
+  .comment-section {
+    max-width: 80%;
+    margin: 0 auto; /* Căn giữa */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 5px 10px;
+  }
+  .comments-list {
+    max-height: 500px;
+    padding: 9px 13px 0px 13px;
+  }
+  .comment-item {
+    gap: 15px; /* Tăng khoảng cách giữa các phần tử */
+  }
+  .comment-content {
+    font-size: 1.6rem; /* Tăng kích thước chữ */
+    padding: 15px; /* Tăng khoảng cách bên trong */
+  }
+  .post-form {
+    max-width: 80%; /* Giới hạn chiều rộng */
+    margin: 0 auto; /* Căn giữa */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 20px; /* Thêm khoảng cách bên trong */
+  }
+  .post-actions .submit-post {
+    font-size: 1.6rem; /* Tăng kích thước chữ */
+    padding: 10px 30px; /* Tăng khoảng cách bên trong */
+  }
+  .icon_left {
+    font-size: 2.5rem;
+  }
+  .list {
+    height: 36px;
+    width: 22%;
+  }
+  .comment-header {
+    padding: 0px 15px;
+  }
+  .comment-header h3 {
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+  .comment-header .close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #666;
+  }
+  .comment-header .close-btn:hover {
+    color: #333;
+  }
+  .comment-input-section {
+    padding: 7px 14px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .comment-input-section .comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+  .comment-input-section .comment-input-wrapper {
+    flex: 1 1;
+    display: flex;
+    align-items: center;
+    background: #f0f2f5;
+    border-radius: 14px;
+    padding: 2px 15px;
+  }
+  .comment-input-section .comment-input-wrapper .comment-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1.4rem;
+  }
+  .comment-input-section .comment-input-wrapper .comment-input:focus {
+    outline: none;
+  }
+  .comment-input-section .comment-input-wrapper .send-comment {
+    background: none;
+    border: none;
+    color: #00b63e;
+    cursor: pointer;
+    padding: 5px;
+  }
+  .comment-input-section .comment-input-wrapper .send-comment:hover {
+    color: #00832d;
+  }
+  .delete-post-btn {
+    padding: 6px 6px;
+    font-size: 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    position: absolute;
+    right: 1%;
+    top: 13%;
+  }
+  .delete-post-btn:hover {
+    background-color: #ff4d4f;
+    color: white;
+  }
+  .post-images-slider {
+    width: 100%; /* Chiếm toàn bộ chiều rộng màn hình */
+    overflow: hidden; /* Ẩn các phần tử vượt ra ngoài */
+  }
+  .post-images-slider .slider-wrapper {
+    display: grid;
+    grid-auto-flow: column; /* Sắp xếp các phần tử theo chiều ngang */
+    grid-auto-columns: 1fr; /* Mỗi ảnh chiếm một phần bằng nhau */
+    gap: 10px; /* Khoảng cách giữa các ảnh */
+    width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng */
+  }
+  .post-images-slider .content_img-form {
+    width: 100%; /* Chiếm toàn bộ chiều rộng của cột */
+    height: 300px; /* Chiều cao cố định */
+    -o-object-fit: cover;
+       object-fit: cover; /* Đảm bảo ảnh không bị méo */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  .post-images-slider .slider-btn {
+    display: none; /* Ẩn nút Next và Prev */
+  }
+  .no-posts_desc {
+    margin-bottom: 0rem;
+    margin: 60px auto;
+  }
+}/*# sourceMappingURL=Forum.module.css.map */

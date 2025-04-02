@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import classNames from "classnames/bind";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -21,10 +21,11 @@ import { useNavigate } from "react-router-dom";
 import { fetchTienNghi, fetchThongTinThem } from "../services/api"; // Import hàm fetchTienIch
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ModalContext } from "../App";
 
 const cx = classNames.bind(styles);
 
-const Survey = ({ onCloseSurvey, showModal }) => {
+const Survey = ({ onCloseSurvey, showModalOne, onReset }) => {
   const [showHide, setShowHide] = useState(false);
   const [showHideOne, setShowHideOne] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
@@ -35,6 +36,8 @@ const Survey = ({ onCloseSurvey, showModal }) => {
   const navigate = useNavigate();
   const [showMap, setShowMap] = useState(false);
   const [lengthdata, setlenghtdata] = useState(null);
+  const { showModal } = useContext(ModalContext);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const [formData, setFormData] = useState({
     tenNhaTro: "",
@@ -63,6 +66,8 @@ const Survey = ({ onCloseSurvey, showModal }) => {
     giaMin: "",
     giaMax: "",
     soPhong: "",
+    tienDien: "",
+    tienNuoc: "",
   });
 
   // Hàm validate số điện thoại
@@ -71,13 +76,115 @@ const Survey = ({ onCloseSurvey, showModal }) => {
     return phoneRegex.test(phone);
   };
 
-  // Sửa lại hàm handleInputChange
+  const formatCurrency = (value) => {
+    const numericValue = value.replace(/[\.,]/g, ""); // Loại bỏ dấu chấm hoặc phẩy
+    if (!numericValue) return ""; // Nếu rỗng, trả về chuỗi rỗng
+    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Thêm dấu chấm mỗi 3 số
+  };
+
+  const handleDeleteImage = (index) => {
+    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "tienDien" || name === "tienNuoc") {
+      // Loại bỏ các ký tự không phải số
+      const numericValue = value.replace(/[^0-9]/g, "");
+
+      // Giới hạn tối đa 6 chữ số
+      if (numericValue.length > 7) {
+        return; // Không cập nhật state nếu vượt quá 6 chữ số
+      }
+
+      // Cho phép giá trị rỗng (để xóa số đầu tiên)
+      if (value === "") {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: "",
+        }));
+        setErrors((prev) => ({
+          ...prev,
+          [name]: "",
+        }));
+        return;
+      }
+
+      // Nếu giá trị là số âm hoặc không hợp lệ, không cập nhật state
+      if (parseInt(numericValue, 10) < 0 || isNaN(parseInt(numericValue, 10))) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: "Vui lòng nhập số dương hợp lệ",
+        }));
+        return;
+      }
+
+      // Xóa lỗi nếu giá trị hợp lệ
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+
+      // Định dạng giá trị với dấu chấm
+      const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+      // Cập nhật giá trị vào state
+      setFormData((prev) => ({
+        ...prev,
+        [name]: formattedValue, // Lưu giá trị đã định dạng
+      }));
+      return;
+    }
+
+    if (name === "kichThuocMin" || name === "kichThuocMax") {
+      // Loại bỏ các ký tự không phải số
+      const numericValue = value.replace(/[^0-9]/g, "");
+
+      if (numericValue.length > 4) {
+        return; // Không cập nhật state nếu vượt quá 4 chữ số
+      }
+
+      // Cho phép giá trị rỗng (để xóa số đầu tiên)
+      if (value === "") {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: "",
+        }));
+        setErrors((prev) => ({
+          ...prev,
+          [name]: "",
+        }));
+        return;
+      }
+
+      // Nếu giá trị là số âm hoặc không hợp lệ, không cập nhật state
+      if (parseInt(numericValue, 10) < 0 || isNaN(parseInt(numericValue, 10))) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: "Vui lòng nhập số dương hợp lệ",
+        }));
+        return;
+      }
+
+      // Xóa lỗi nếu giá trị hợp lệ
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+
+      // Cập nhật giá trị vào state
+      setFormData((prev) => ({
+        ...prev,
+        [name]: numericValue, // Lưu giá trị mới
+      }));
+      return;
+    }
+
+    // Xử lý số phòng (giới hạn 2 số)
     if (name === "soPhong") {
-      // Chỉ cho phép nhập số và giới hạn 2 chữ số
       if (value.length <= 2 && /^\d*$/.test(value)) {
-        setFormData({ ...formData, [name]: value });
+        setFormData((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({
           ...prev,
           soPhong: value
@@ -89,9 +196,48 @@ const Survey = ({ onCloseSurvey, showModal }) => {
       }
       return;
     }
-    setFormData({ ...formData, [name]: value });
 
-    // Validate từng trường khi người dùng nhập
+    // Xử lý định dạng số tiền (giaMin, giaMax)
+    if (name === "giaMin" || name === "giaMax") {
+      const rawValue = value.replace(/[\.,]/g, ""); // Loại bỏ dấu phân cách cũ
+      if (!/^\d*$/.test(rawValue)) return; // Chỉ cho phép số
+      if (rawValue.length > 12) return; // Giới hạn tối đa 12 chữ số
+
+      const formattedValue = formatCurrency(rawValue); // Format lại với dấu chấm
+
+      setFormData((prev) => ({
+        ...prev,
+        [name]: formattedValue, // Hiển thị giá trị có dấu chấm
+        [`${name}Raw`]: rawValue, // Lưu giá trị gốc để xử lý logic
+      }));
+
+      // Validation cho giá tiền
+      const numericValue = parseInt(rawValue, 10) || 0;
+      const min =
+        name === "giaMin"
+          ? numericValue
+          : parseInt(formData.giaMinRaw || "0", 10);
+      const max =
+        name === "giaMax"
+          ? numericValue
+          : parseInt(formData.giaMaxRaw || "0", 10);
+
+      setErrors((prev) => ({
+        ...prev,
+        giaMin: min === 0 ? "Vui lòng nhập giá tối thiểu" : "",
+        giaMax:
+          max === 0
+            ? "Vui lòng nhập giá tối đa"
+            : min > max
+            ? "Giá tối thiểu không được lớn hơn giá tối đa"
+            : "",
+      }));
+      return;
+    }
+
+    // Xử lý các input khác
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     switch (name) {
       case "sdt":
         setErrors((prev) => ({
@@ -99,31 +245,14 @@ const Survey = ({ onCloseSurvey, showModal }) => {
           sdt: !value
             ? "Vui lòng nhập số điện thoại"
             : !validatePhone(value)
-              ? "Số điện thoại không hợp lệ"
-              : "",
+            ? "Số điện thoại không hợp lệ"
+            : "",
         }));
         break;
       case "diaChi":
         setErrors((prev) => ({
           ...prev,
           diaChi: !value.trim() ? "Vui lòng nhập địa chỉ" : "",
-        }));
-        break;
-      case "giaMin":
-      case "giaMax":
-        const min =
-          name === "giaMin" ? parseInt(value) : parseInt(formData.giaMin);
-        const max =
-          name === "giaMax" ? parseInt(value) : parseInt(formData.giaMax);
-
-        setErrors((prev) => ({
-          ...prev,
-          giaMin: !min ? "Vui lòng nhập giá tối thiểu" : "",
-          giaMax: !max
-            ? "Vui lòng nhập giá tối đa"
-            : min > max && max
-              ? "Giá tối thiểu không được lớn hơn giá tối đa"
-              : "",
         }));
         break;
       default:
@@ -147,9 +276,17 @@ const Survey = ({ onCloseSurvey, showModal }) => {
   // Chọn ảnh
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files); // Lấy danh sách ảnh được chọn
+    // Kiểm tra nếu tổng số hình ảnh vượt quá 6
+    if (selectedImages.length + files.length > 6) {
+      showModal(
+        "Cảnh báo!",
+        "Bạn chỉ được tải lên tối đa 6 hình ảnh.",
+        "warning"
+      );
+      return;
+    }
     setSelectedImages((prevImages) => [...prevImages, ...files]); // Thêm vào state
   };
-
 
   // Box change
   const handleCheckboxChange = (e) => {
@@ -183,37 +320,52 @@ const Survey = ({ onCloseSurvey, showModal }) => {
       sdt: !formData.sdt
         ? "Vui lòng nhập số điện thoại"
         : !validatePhone(formData.sdt)
-          ? "Số điện thoại không hợp lệ"
-          : "",
+        ? "Số điện thoại không hợp lệ"
+        : "",
       diaChi: !formData.diaChi.trim() ? "Vui lòng nhập địa chỉ" : "",
       giaMin: !formData.giaMin ? "Vui lòng nhập giá tối thiểu" : "",
       giaMax: !formData.giaMax
         ? "Vui lòng nhập giá tối đa"
-        : parseInt(formData.giaMin) > parseInt(formData.giaMax)
-          ? "Giá tối thiểu không được lớn hơn giá tối đa"
-          : "",
-
-      // Thêm validation cho số phòng
+        : parseInt(formData.giaMin.replace(/\./g, ""), 10) >
+          parseInt(formData.giaMax.replace(/\./g, ""), 10)
+        ? "Giá tối thiểu không được lớn hơn giá tối đa"
+        : "",
       soPhong: !formData.soPhong
         ? "Vui lòng nhập số phòng"
         : formData.soPhong <= 0
-          ? "Số phòng phải lớn hơn 0"
-          : "",
+        ? "Số phòng phải lớn hơn 0"
+        : "",
+      lat: !formData.lat ? "Vui lòng chọn tọa độ trên bản đồ" : "",
+      lon: !formData.lon ? "Vui lòng chọn tọa độ trên bản đồ" : "",
     };
 
     setErrors(newErrors);
 
-    // Kiểm tra nếu có lỗi thì không submit
     if (Object.values(newErrors).some((error) => error)) {
+      showModal(
+        "Lỗi khi gửi dữ liệu!",
+        "Vui lòng nhập đầy đủ thông tin cần thiết.",
+        "error"
+      );
       return;
     }
 
     try {
+      // Chuyển đổi giá trị giaMin và giaMax từ chuỗi sang số
+      const dataToSend = {
+        ...formData,
+        giaMin: parseInt(formData.giaMin.replace(/\./g, ""), 10),
+        giaMax: parseInt(formData.giaMax.replace(/\./g, ""), 10),
+        tienDien: parseInt(formData.tienDien.replace(/\./g, ""), 10),
+        tienNuoc: parseInt(formData.tienNuoc.replace(/\./g, ""), 10)
+      };
+
+      console.log("Dữ liệu gửi đi: ", dataToSend);
+
       // Gửi thông tin trọ trước
-      console.log("dữ liệu gửi đi:  ", formData);
       const infoResponse = await axios.post(
-        "http://localhost:8000/api/nha-tro",
-        formData,
+        "API_URL/api/nha-tro",
+        dataToSend,
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -230,7 +382,7 @@ const Survey = ({ onCloseSurvey, showModal }) => {
         formDataImage.append("nhaTroId", infoResponse.data.nhaTro.id);
 
         const imageResponse = await axios.post(
-          "http://localhost:8000/api/upload-multiple",
+          "API_URL/api/upload-multiple",
           formDataImage,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -241,8 +393,10 @@ const Survey = ({ onCloseSurvey, showModal }) => {
       toast.success("Nhà trọ đã được đăng ký thành công!");
 
       // Thông báo gửi thông tin thành công
-      showModal();
+      showModalOne();
       onCloseSurvey();
+      // Gọi hàm onReset
+      onReset();
     } catch (error) {
       if (error.response) {
         console.error(
@@ -302,6 +456,7 @@ const Survey = ({ onCloseSurvey, showModal }) => {
           <FontAwesomeIcon icon={faTimes} />
         </button>
       </header>
+      <div className={cx("seperate")}></div>
       <div className={cx("content")}>
         <div className={cx("form_group")}>
           <input
@@ -339,9 +494,6 @@ const Survey = ({ onCloseSurvey, showModal }) => {
           <label className={cx("form-intern-label")}>
             Số điện thoại chủ trọ
           </label>
-          {errors.sdt && (
-            <span className={cx("error-message")}>{errors.sdt}</span>
-          )}
         </div>
 
         <div className={cx("form_group")}>
@@ -354,9 +506,6 @@ const Survey = ({ onCloseSurvey, showModal }) => {
             placeholder=" "
           />
           <label className={cx("form-intern-label")}>Địa chỉ nhà trọ</label>
-          {errors.diaChi && (
-            <span className={cx("error-message")}>{errors.diaChi}</span>
-          )}
         </div>
 
         <div className={cx("form_group")}>
@@ -370,9 +519,6 @@ const Survey = ({ onCloseSurvey, showModal }) => {
             maxLength="2" // Thêm maxLength
           />
           <label className={cx("form-intern-label")}>Số phòng trọ</label>
-          {errors.soPhong && (
-            <span className={cx("error-message")}>{errors.soPhong}</span>
-          )}
         </div>
 
         <div className={cx("dien-tich-container")}>
@@ -381,46 +527,36 @@ const Survey = ({ onCloseSurvey, showModal }) => {
             <div className={cx("dien-tich-item")}>
               <span className={cx("dien-tich-label")}></span>
               <input
-                type="number"
+                type="text"
                 name="giaMin"
                 className={cx("dien-tich-input", errors.giaMin && "error")}
                 placeholder="Nhập giá tối thiểu"
-                value={formData.giaMin}
+                value={formData.giaMin || ""}
                 onChange={handleInputChange}
               />
-              {errors.giaMin && (
-                <span className={cx("error-message-price")}>
-                  {errors.giaMin}
-                </span>
-              )}
             </div>
             <p> -- </p>
             <div className={cx("dien-tich-item")}>
               <span className={cx("dien-tich-label")}></span>
               <input
-                type="number"
+                type="text"
                 name="giaMax"
                 className={cx("dien-tich-input", errors.giaMax && "error")}
                 placeholder="Nhập giá tối đa"
-                value={formData.giaMax}
+                value={formData.giaMax || ""}
                 onChange={handleInputChange}
               />
-              {errors.giaMax && (
-                <span className={cx("error-message-price")}>
-                  {errors.giaMax}
-                </span>
-              )}
             </div>
           </div>
         </div>
 
         <div className={cx("dien-tich-container")}>
-          <h2 className={cx("form_title")}>Diện tích (m2)</h2>
+          <h2 className={cx("form_title")}>Diện tích m²</h2>
           <div className={cx("dien-tich-container1")}>
             <div className={cx("dien-tich-item")}>
               <span className={cx("dien-tich-label")}></span>
               <input
-                type="number"
+                type="text"
                 name="kichThuocMin"
                 className={cx("dien-tich-input")}
                 placeholder="Ví dụ: 20"
@@ -432,7 +568,7 @@ const Survey = ({ onCloseSurvey, showModal }) => {
             <div className={cx("dien-tich-item")}>
               <span className={cx("dien-tich-label")}></span>
               <input
-                type="number"
+                type="text"
                 name="kichThuocMax"
                 className={cx("dien-tich-input")}
                 placeholder="Ví dụ: 30 "
@@ -507,37 +643,45 @@ const Survey = ({ onCloseSurvey, showModal }) => {
         </div>
 
         <div className={cx("form_group")}>
-      <label className={cx("file-input-label")}>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          className={cx("form_input", "file-input")}
-          onChange={handleImageChange}
-        />
-        <span className={cx("file-input-text")}>
-          Thêm ảnh trọ
-          <FontAwesomeIcon icon={faCamera} />
-        </span>
-      </label>
+          <label className={cx("file-input-label")}>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              className={cx("form_input", "file-input")}
+              onChange={handleImageChange}
+            />
+            <span className={cx("file-input-text")}>
+              Thêm ảnh phòng trọ
+              <FontAwesomeIcon icon={faCamera} />
+            </span>
+          </label>
 
-      {/* Hiển thị ảnh đã chọn */}
-      <div className={cx("preview-container")}>
-        {selectedImages.length > 0 &&
-          selectedImages.map((image, index) => {
-            const imageUrl = URL.createObjectURL(image);
-            return (
-              <img
-                key={index}
-                src={imageUrl}
-                alt={`preview-${index}`}
-                className={cx("preview-image")}
-                onLoad={() => URL.revokeObjectURL(imageUrl)} // Giải phóng bộ nhớ sau khi tải ảnh
-              />
-            );
-          })}
-      </div>
-      </div>
+          {/* Hiển thị ảnh đã chọn */}
+          <div className={cx("preview-container")}>
+            {selectedImages.length > 0 &&
+              selectedImages.map((image, index) => {
+                const imageUrl = URL.createObjectURL(image);
+                return (
+                  <div key={index} className={cx("preview-item")}>
+                    <img
+                      src={imageUrl}
+                      alt={`preview-${index}`}
+                      className={cx("preview-image")}
+                      onLoad={() => URL.revokeObjectURL(imageUrl)} // Giải phóng bộ nhớ sau khi tải ảnh
+                    />
+                    <button
+                      type="button"
+                      className={cx("delete-button")}
+                      onClick={() => handleDeleteImage(index)}
+                    >
+                      ✖
+                    </button>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
 
         <div className={cx("form_group")}>
           <input
@@ -578,6 +722,9 @@ const Survey = ({ onCloseSurvey, showModal }) => {
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <LocationMarker />
           </MapContainer>
+          {errors.lat && (
+            <span className={cx("error-message-map")}>{errors.lat}</span>
+          )}
         </div>
 
         <button className={cx("btn")} onClick={handleSubmit}>

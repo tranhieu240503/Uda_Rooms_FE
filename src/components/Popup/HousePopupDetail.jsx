@@ -1,8 +1,11 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import { jwtDecode } from "jwt-decode";
-import React, { useEffect, useState } from "react";
-import { Carousel } from 'react-responsive-carousel';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import React, { useEffect, useState, useContext } from "react";
+import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Modal from "../Modal/Modal";
 import {
   fetchDanhGia,
   fetchGuiDanhGia,
@@ -10,8 +13,10 @@ import {
   fetchThongTinThem,
   fetchTienIchXungQuanh,
   fetchTienNghi,
-  getHouseDetail
+  getHouseDetail,
 } from "../../services/api"; // Import hàm fetchTienIch
+
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 import "./HousePopupDetail.css";
 
 const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
@@ -19,15 +24,27 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
 
   const [houseState, sethouseState] = useState(null);
   const [images, setImages] = useState([]);
-  const [danhGiaList, setDanhGiaList] = useState([])
-  const [trungBinhSao, settrungBinhSao] = useState([])
+  const [danhGiaList, setDanhGiaList] = useState([]);
+  const [trungBinhSao, settrungBinhSao] = useState([]);
 
-  const [tienIch, setTienIch] = useState([]);// Lấy khoảng cách từ trọ tới tiện ích
+  const [tienIch, setTienIch] = useState([]); // Lấy khoảng cách từ trọ tới tiện ích
   const [thongTinThemList, setThongTinThem] = useState([]); // State để lưu trữ thông tin thêm từ nhà trọ
-  const [tienNghiList, setTienNghiList] = useState([]);// Lấy danh sách nội thất từ nhà trọ
+  const [tienNghiList, setTienNghiList] = useState([]); // Lấy danh sách nội thất từ nhà trọ
   const [thongTinThemListAll, setThongTinThemAll] = useState([]); // State để lưu trữ thông tin thêm từ API
-  const [tienNghiListAll, setTienNghiListAll] = useState([]);// Lấy danh sách nội thất từ API
-  const [tokenstatus, settokenstatus] = useState(false)
+  const [tienNghiListAll, setTienNghiListAll] = useState([]); // Lấy danh sách nội thất từ API
+  const [tokenstatus, settokenstatus] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const showModalOne = () => {
+    setTimeout(() => {
+    setIsModalVisible(true); 
+    setTimeout(() => {
+      setIsModalVisible(false);
+      console.log("Modal is now hidden");
+    }, 4000);
+  }, 50); // Đặt timeout ngắn để đảm bảo React nhận ra sự thay đổi
+};
 
   console.log("🏠 Dữ liệu nhà trọ:", house);
   const id = house.id;
@@ -53,15 +70,18 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
       const response = await fetchGuiDanhGia(id, danhGiaData);
 
       if (response) {
-        alert(response.message);
-        setNoiDung("");
-        setSoSao(5);
+        showModalOne();
         setError(null);
 
         // 🔄 Load lại danh sách đánh giá ngay sau khi gửi đánh giá thành công
         const updatedDanhGia = await fetchDanhGia(id);
         setDanhGiaList(updatedDanhGia.data.danhGiaList);
         settrungBinhSao(updatedDanhGia.data.trungBinhSao);
+
+        setTimeout(() => {
+          setNoiDung("");
+          setSoSao(5);
+        }, 500);
       } else {
         setError("Lỗi xảy ra!");
       }
@@ -70,7 +90,6 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
       setError("Lỗi kết nối đến server!");
     }
   };
-
 
   // Lấy danh sách thông tin thêm từ api
   useEffect(() => {
@@ -88,8 +107,6 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
     fetchThongTinThemList();
   }, []);
 
-
-
   // Lấy ds tiện nghi từ API
   useEffect(() => {
     const fetchTienNghiList = async () => {
@@ -105,14 +122,13 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
     fetchTienNghiList();
   }, []);
 
-
   // Lấy chức năng tính khoảng cách tiện ích xung quanh từ API
   useEffect(() => {
     const fetchTienIch = async () => {
       if (house?.lat && house?.lon) {
         const toado = {
           lat: house.lat,
-          lon: house.lon
+          lon: house.lon,
         };
         const res = await fetchTienIchXungQuanh(toado);
         setTienIch(res || []);
@@ -120,11 +136,6 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
     };
     fetchTienIch();
   }, [house?.lat, house?.lon]);
-
-
-
-
-
 
   useEffect(() => {
     const loadImages = async () => {
@@ -137,30 +148,23 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
     loadImages();
   }, [activeTab, id]);
 
-
-
-
-
   // Xử lý lấy dữ liệu nhà trọ
   useEffect(() => {
     const fetchHouse = async () => {
       try {
         const data1 = await getHouseDetail(id);
-        console.log(id)
-        const data2 = await fetchDanhGia(id)
-        console.log(data2)
+        console.log(id);
+        const data2 = await fetchDanhGia(id);
+        console.log(data2);
         setThongTinThem([...data1.data.ThongTinThems]);
-        setTienNghiList([...data1.data.TienNghis])
+        setTienNghiList([...data1.data.TienNghis]);
         setDanhGiaList([...data2.data.danhGiaList]);
-        settrungBinhSao(data2.data.trungBinhSao) // Cập nhật state thông tin thêm của nhà trọ
+        settrungBinhSao(data2.data.trungBinhSao); // Cập nhật state thông tin thêm của nhà trọ
         // Cập nhật state thông tin thêm của nhà trọ
         console.log("🏠 Dữ liệu thông tin thêm:", data1.data.ThongTinThems);
 
-
         console.log("🏠 Dữ liệu tiện nghi:", data1.data.TienNghis);
         sethouseState(data1.data);
-
-
 
         if (typeof onCoordinatesr === "function") {
           const coordinates = { lat: data1.data.lat, lng: data1.data.lon };
@@ -175,19 +179,16 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
     fetchHouse();
   }, [id]);
 
-
-
-
   const handleTabChange = (tab) => setActiveTab(tab);
 
-
-
-  // Lọc ra danh sách nội thất 
+  // Lọc ra danh sách nội thất
   const tienNghiArray = Array.isArray(tienNghiList) ? tienNghiList : [];
   console.log("Danh sách nội thất:", tienNghiList);
 
   // Lọc ra danh sách thông tin thêm
-  const thongTinThemArray = Array.isArray(thongTinThemList) ? thongTinThemList : [];
+  const thongTinThemArray = Array.isArray(thongTinThemList)
+    ? thongTinThemList
+    : [];
   console.log("Danh sách thông tin thêm:", thongTinThemList);
 
   console.log("✅ Dữ liệu tất cả Ttt:", thongTinThemListAll);
@@ -202,285 +203,373 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
     return result;
   };
 
-
   return (
-    <div className="popup-container">
-      <div className="popup-tabs">
-        <button onClick={() => handleTabChange("info")} className={`tab-btn ${activeTab === "info" ? "active" : ""}`}>Giới thiệu</button>
-        <button onClick={() => handleTabChange("amenities")} className={`tab-btn ${activeTab === "amenities" ? "active" : ""}`}>Chi tiết</button>
-        <button onClick={() => handleTabChange("image")} className={`tab-btn ${activeTab === "image" ? "active" : ""}`}>Hình ảnh</button>
-        <button onClick={() => handleTabChange("danhgia")} className={`tab-btn ${activeTab === "danhgia" ? "active" : ""}`}>Đánh giá</button>
-      </div>
+    <>
+      {isModalVisible && (
+        <Modal
+          desc="Đánh giá thành công!"
+          note="Cảm ơn bạn đã đóng góp ý kiến."
+          onClose={() => setIsModalVisible(false)}
+        />
+      )}
 
-      {/* Tabs content */}
-      {activeTab === "info" && (
-        <div className="table-responsive house-info-table">
-          <table className="table table-bordered table-hover table-sm mb-0">
-            <tbody>
-              <tr>
-                <th>Tên nhà trọ</th>
-                <td>{house.tenNhaTro}</td>
-              </tr>
-              <tr>
-                <th>Địa chỉ</th>
-                <td>{house.diaChi}</td>
-              </tr>
-              <tr>
-                <th>Chủ nhà</th>
-                <td>{house.tenChuNha}</td>
-              </tr>
-              <tr>
-                <th>SĐT</th>
-                <td>{house.sdt}</td>
-              </tr>
-              <tr>
-                <th>Kích thước</th>
-                <td>{house.kichThuocMin} - {house.kichThuocMax} m²</td>
-              </tr>
-              <tr>
-                <th>Số phòng</th>
-                <td>{house.soPhong}</td>
-              </tr>
-              <tr>
-                <th>Giá thuê</th>
-                <td>
-                  {house.giaMin ? house.giaMin.toLocaleString() : "N/A"} -{" "}
-                  {house.giaMax ? house.giaMax.toLocaleString() : "N/A"} VND/tháng
-                </td>
-              </tr>
-              <tr>
-                <th>Giá điện</th>
-                <td>{house.tienDien.toLocaleString()} VND/kWh</td>
-              </tr>
-              <tr>
-                <th>Giá nước</th>
-                <td>{house.tienNuoc.toLocaleString()} VND/m³</td>
-              </tr>
-              <tr>
-                <th>Khoảng cách tới trường</th>
-                <td> {house.khoangCachTruong} m</td>
-              </tr>
-              <tr>
-                <th>Tình trạng</th>
-                <td><b style={{ color: house.conPhong ? "green" : "red", fontWeight: "bold" }}>
-                  {house.conPhong ? "Còn phòng" : "Hết phòng"}</b>
-                </td>
-              </tr>
-              <tr>
-                <th>Cập nhật</th>
-                <td>{new Date(house.updatedAt).toLocaleString()}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <a href="#" onClick={(e) => {
-            e.preventDefault();
-            if (typeof onShowRouting === "function") {
-              onShowRouting(); // gọi hàm từ cha và truyền house hiện tại
-            }
-
-          }}
-            style={{ color: "blue", backgroundColor: "white" }}
+      <div className="popup-container">
+        <div className="popup-tabs">
+          <button
+            onClick={() => handleTabChange("info")}
+            className={`tab-btn ${activeTab === "info" ? "active" : ""}`}
           >
-            Xem chỉ dẫn tới trọ
-          </a>
-        </div>
-      )}
-
-      {activeTab === "amenities" && (
-        <div className="house-amenities-table">
-          <div className="amenities-scroll-wrapper">
-            <p><b>Tiện nghi:</b></p>
-            <table>
-              <tbody>
-                {Array.isArray(tienNghiListAll) && chunkArray(tienNghiListAll, 2).map((row, index) => (
-                  <tr key={index}>
-                    {row.map((item) => {
-                      const isAvailable = Array.isArray(tienNghiArray) && tienNghiArray.some(nt => nt.id === item.id);
-                      return (
-                        <td key={item.id}>
-                          <span className={`icon ${isAvailable ? "yes" : "no"}`}>
-                            {isAvailable ? "✔️" : "❌"}
-                          </span> {item.tenTienNghi}
-                        </td>
-                      );
-                    })}
-                    {/* Nếu hàng chỉ có 1 cột thì thêm 1 <td> để đủ 2 cột */}
-                    {row.length < 2 && <td></td>}
-                  </tr>
+            Giới thiệu
+          </button>
+          <button
+            onClick={() => handleTabChange("amenities")}
+            className={`tab-btn ${activeTab === "amenities" ? "active" : ""}`}
+          >
+            Chi tiết
+          </button>
+          <button
+            onClick={() => handleTabChange("image")}
+            className={`tab-btn ${activeTab === "image" ? "active" : ""}`}
+          >
+            Hình ảnh
+          </button>
+          <button
+            onClick={() => handleTabChange("danhgia")}
+            className={`tab-btn ${activeTab === "danhgia" ? "active" : ""}`}
+          >
+            <div className="box-danhgia">
+              <p>Đánh giá</p>
+              <div className="box-star">
+                {[...Array(5)].map((_, index) => (
+                  <span
+                    key={index}
+                    className={`star ${
+                      index < (trungBinhSao ? Math.round(trungBinhSao) : 5)
+                        ? "yellow"
+                        : "white"
+                    }`}
+                  >
+                    <FontAwesomeIcon icon={faStar} />
+                  </span>
                 ))}
-              </tbody>
-            </table>
-
-
-            <p><b>Thông tin thêm:</b></p>
-            <table>
-              <tbody>
-                {chunkArray(thongTinThemListAll, 2).map((row, index) => (
-                  <tr key={index}>
-                    {row.map((item) => {
-                      const isAvailable = thongTinThemArray.some(nt => nt.id === item.id);
-                      return (
-                        <td key={item.id}>
-                          <span className={`icon ${isAvailable ? "yes" : "no"}`}>
-                            {isAvailable ? "✔️" : "❌"}
-                          </span> {item.thongTinThem}
-                        </td>
-                      );
-                    })}
-                    {row.length < 2 && <td></td>}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-
-            {/* <div className="house-amenities-table"> */}
-            <p><b>Tiện ích xung quanh:</b></p>
-            <table className="custom-table ">
-              <thead>
-                <tr>
-                  <th>STT</th>
-                  <th>Tên tiện ích</th>
-                  <th>Khoảng cách</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Array.isArray(tienIch) && tienIch.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.tenTienIch}</td>
-                    <td>{Math.round(item.distance)} m</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {/* </div> */}
-
-
-
-            <p style={{ color: "red" }}><b>Ghi chú:</b></p>
-            <p>{house.ghiChu ? house.ghiChu.toLocaleString() : "Không có lưu ý"}</p>
-          </div>
-        </div>
-      )}
-
-
-
-
-      {activeTab === "image" && (
-        <>
-
-          {images.length > 0 ? (
-            <Carousel showThumbs={false} infiniteLoop autoPlay>
-              {images.map((img, index) => (
-                <div key={index}>
-                  <img src={img} alt={`Hình ảnh ${index + 1}`} />
-                </div>
-              ))}
-            </Carousel>
-          ) : (
-            <p style={{ color: "red" }}>Không có hình ảnh</p>
-          )}
-        </>
-      )}
-
-
-
-
-      {activeTab === "danhgia" && (
-        <>
-          {/* 📌 Tổng đánh giá & trung bình số sao */}
-          <div className="mb-3">
-            <h3 className="h5">
-            📢 Đánh Giá: <span className="text-warning">{'⭐'.repeat(Math.round(trungBinhSao) || 5)}</span>
-            <br />
-              <small className="text-muted">({danhGiaList.length} người đánh giá)</small>
-            </h3>
-          </div>
-
-          {/* 📌 Danh sách đánh giá */}
-          <div className="mb-4">
-            {danhGiaList.map((danhGia) => (
-              <div key={danhGia.id} className="border rounded p-3 mb-3">
-                {/* Avatar + Tên + Thời gian */}
-                <div className="d-flex align-items-center justify-content-between mb-2">
-                  {/* Avatar + Tên (Bên trái) */}
-                  <div className="d-flex align-items-center">
-                    <img
-                      src={`http://localhost:8000${danhGia.User?.avatar || "/upload_avataruser/avatar-mac-dinh.png"}`}
-                      alt="Avatar"
-                      width={30}
-                      height={30}
-                      className="rounded-circle me-2"
-                      style={{ objectFit: "cover" }}
-                    />
-                    <strong>{danhGia.User?.fullname || "Ẩn danh"}</strong>
-                  </div>
-
-                  {/* Thời gian (Bên phải) */}
-                  <small className="text-muted">{new Date(danhGia.updatedAt).toLocaleString()}</small>
-                </div>
-
-                {/* Số sao */}
-                <p className="mb-1 text-warning">👍 {"★".repeat(danhGia.soSao)}</p>
-
-                {/* Nội dung đánh giá */}
-                <p className="mb-0">📢 {danhGia.noiDung}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          </button>
+        </div>
 
-          {/* 📌 Form đánh giá */}
-          <div className="border rounded p-4">
-            <h4 className="h6 mb-3">Viết đánh giá của bạn</h4>
-
-            {/* Kiểm tra token */}
-            {tokenstatus ? (
-              <>
-                {/* Nhập nội dung đánh giá */}
-                <div className="mb-3">
-                  <textarea
-                    className="form-control"
-                    placeholder="Nhập nội dung đánh giá..."
-                    value={noiDung}
-                    onChange={(e) => setNoiDung(e.target.value)}
-                    rows={4}
-                  />
-                </div>
-
-                {/* Chọn số sao */}
-                <div className="mb-3">
-                  <label className="form-label me-2">Chọn số sao:</label>
-                  {[1, 2, 3, 4, 5].map((sao) => (
-                    <button
-                      key={sao}
-                      type="button"
-                      className={`btn btn-sm ${soSao >= sao ? "btn-warning" : "btn-outline-secondary"} me-1`}
-                      onClick={() => setSoSao(sao)}
-                      style={{ width: "30px", height: "30px", fontSize: "14px", padding: "0" }}
+        {/* Tabs content */}
+        {activeTab === "info" && (
+          <div className="table-responsive house-info-table">
+            <table className="table table-bordered table-hover table-sm mb-0">
+              <tbody>
+                <tr>
+                  <th>Tên nhà trọ</th>
+                  <td>{house.tenNhaTro}</td>
+                </tr>
+                <tr>
+                  <th>Địa chỉ</th>
+                  <td>{house.diaChi}</td>
+                </tr>
+                <tr>
+                  <th>Chủ nhà</th>
+                  <td>{house.tenChuNha}</td>
+                </tr>
+                <tr>
+                  <th>SĐT</th>
+                  <td>{house.sdt}</td>
+                </tr>
+                <tr>
+                  <th>Kích thước</th>
+                  <td>
+                    {house.kichThuocMin} - {house.kichThuocMax} m²
+                  </td>
+                </tr>
+                <tr>
+                  <th>Số phòng</th>
+                  <td>{house.soPhong}</td>
+                </tr>
+                <tr>
+                  <th>Giá thuê</th>
+                  <td>
+                    {house.giaMin ? house.giaMin.toLocaleString() : "N/A"} -{" "}
+                    {house.giaMax ? house.giaMax.toLocaleString() : "N/A"}{" "}
+                    VND/tháng
+                  </td>
+                </tr>
+                <tr>
+                  <th>Giá điện</th>
+                  <td>{house.tienDien.toLocaleString()} VND/kWh</td>
+                </tr>
+                <tr>
+                  <th>Giá nước</th>
+                  <td>{house.tienNuoc.toLocaleString()} VND/m³</td>
+                </tr>
+                <tr>
+                  <th>Khoảng cách tới trường</th>
+                  <td> {(house.khoangCachTruong / 1000).toFixed(2)} km</td>
+                </tr>
+                <tr>
+                  <th>Tình trạng</th>
+                  <td>
+                    <b
+                      style={{
+                        color: house.conPhong ? "green" : "red",
+                        fontWeight: "bold",
+                      }}
                     >
-                      {soSao >= sao ? "⭐" : "★"}
-                    </button>
-                  ))}
-                </div>
+                      {house.conPhong ? "Còn phòng" : "Hết phòng"}
+                    </b>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Cập nhật</th>
+                  <td>{new Date(house.updatedAt).toLocaleDateString()}</td>
+                </tr>
+              </tbody>
+            </table>
 
-                {/* Nút gửi đánh giá */}
-                <button className="btn btn-primary" onClick={handleDanhGia}>
-                  Gửi đánh giá
-                </button>
-              </>
-            ) : (
-              <p className="text-danger">Bạn phải đăng nhập để đánh giá.</p>
-            )}
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (typeof onShowRouting === "function") {
+                  onShowRouting(); // gọi hàm từ cha và truyền house hiện tại
+                }
+              }}
+              style={{ color: "blue", backgroundColor: "white" }}
+            >
+              Xem chỉ dẫn tới trọ
+            </a>
           </div>
-        </>
-      )}
+        )}
+
+        {activeTab === "amenities" && (
+          <div className="house-amenities-table">
+            <div className="amenities-scroll-wrapper">
+              <p>
+                <b>Tiện nghi:</b>
+              </p>
+              <table>
+                <tbody>
+                  {Array.isArray(tienNghiListAll) &&
+                    chunkArray(tienNghiListAll, 2).map((row, index) => (
+                      <tr key={index}>
+                        {row.map((item) => {
+                          const isAvailable =
+                            Array.isArray(tienNghiArray) &&
+                            tienNghiArray.some((nt) => nt.id === item.id);
+                          return (
+                            <td key={item.id}>
+                              <span
+                                className={`icon ${isAvailable ? "yes" : "no"}`}
+                              >
+                                {isAvailable ? "✔️" : "❌"}
+                              </span>{" "}
+                              {item.tenTienNghi}
+                            </td>
+                          );
+                        })}
+                        {/* Nếu hàng chỉ có 1 cột thì thêm 1 <td> để đủ 2 cột */}
+                        {row.length < 2 && <td></td>}
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+
+              <p>
+                <b>Thông tin thêm:</b>
+              </p>
+              <table>
+                <tbody>
+                  {chunkArray(thongTinThemListAll, 2).map((row, index) => (
+                    <tr key={index}>
+                      {row.map((item) => {
+                        const isAvailable = thongTinThemArray.some(
+                          (nt) => nt.id === item.id
+                        );
+                        return (
+                          <td key={item.id}>
+                            <span
+                              className={`icon ${isAvailable ? "yes" : "no"}`}
+                            >
+                              {isAvailable ? "✔️" : "❌"}
+                            </span>{" "}
+                            {item.thongTinThem}
+                          </td>
+                        );
+                      })}
+                      {row.length < 2 && <td></td>}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* <div className="house-amenities-table"> */}
+              <p>
+                <b>Tiện ích xung quanh:</b>
+              </p>
+              <table className="custom-table ">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Tên tiện ích</th>
+                    <th>Khoảng cách</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Array.isArray(tienIch) &&
+                    tienIch.map((item, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{item.tenTienIch}</td>
+                        <td>{(item.distance / 1000).toFixed(2)} km</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+              {/* </div> */}
+
+              <p style={{ color: "red" }}>
+                <b>Ghi chú:</b>
+              </p>
+              <p>{house.ghiChu ? house.ghiChu.toLocaleString() : ""}</p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "image" && (
+          <>
+            {images.length > 0 ? (
+  <Carousel showThumbs={false} infiniteLoop autoPlay>
+    {images.map((img, index) => (
+      <div key={index}>
+        <img src={img.url} alt={`Hình ảnh ${index + 1}`} />
+      </div>
+    ))}
+  </Carousel>
+) : (
+  <p style={{ color: "red" }}>Không có hình ảnh</p>
+)}
+
+          </>
+        )}
+
+        {activeTab === "danhgia" && (
+          <>
+            {/* 📌 Tổng đánh giá & trung bình số sao */}
+            <div className="mb-3">
+              <h3 className="h5">
+                📢 Đánh Giá:{" "}
+                <span className="text-warning">
+                  {"⭐".repeat(Math.round(trungBinhSao) || 5)}
+                </span>
+                <br />
+                <small className="text-muted">
+                  ({danhGiaList.length} người đánh giá)
+                </small>
+              </h3>
+            </div>
+
+            {/* 📌 Danh sách đánh giá */}
+            <div className="danhgia">
+              <div className="mb-4">
+                {danhGiaList.map((danhGia) => (
+                  <div key={danhGia.id} className="border rounded p-3 mb-3">
+                    {/* Avatar + Tên + Thời gian */}
+                    <div className="d-flex align-items-center justify-content-between mb-2">
+                      {/* Avatar + Tên (Bên trái) */}
+                      <div className="d-flex align-items-center">
+  <img
+    src={
+      danhGia.User?.avatar
+        ? `${process.env.REACT_APP_API_URL}/upload_avataruser/${danhGia.User.avatar}`
+        : `${process.env.REACT_APP_API_URL}/upload_avataruser/avatar-mac-dinh.png`
+    }
+    alt="Avatar"
+    width={30}
+    height={30}
+    className="rounded-circle me-2"
+    style={{ objectFit: "cover" }}  
+  />
+  <strong>{danhGia.User?.fullname || "Ẩn danh"}</strong>
+</div>
 
 
-    </div>
+                      {/* Thời gian (Bên phải) */}
+                      <small className="text-muted">
+                        {new Date(danhGia.updatedAt).toLocaleDateString()}
+                      </small>
+                    </div>
+
+                    {/* Số sao */}
+                    <p className="mb-1 text-warning">
+                      👍 {"★".repeat(danhGia.soSao)}
+                    </p>
+
+                    {/* Nội dung đánh giá */}
+                    <p className="mb-0">📢 {danhGia.noiDung}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* 📌 Form đánh giá */}
+              <div className="border rounded p-4">
+                {/* Kiểm tra token */}
+                {tokenstatus ? (
+                  <>
+                    {/* Nhập nội dung đánh giá */}
+                    <div className="mb-3">
+                      <textarea
+                        className="form-control"
+                        placeholder="Nhập nội dung đánh giá..."
+                        value={noiDung}
+                        onChange={(e) => setNoiDung(e.target.value)}
+                        rows={4}
+                        maxLength={200}
+                      />
+                    </div>
+
+                    {/* Chọn số sao */}
+                    <div className="mb-3">
+                      <label className="form-label me-2">Chọn số sao:</label>
+                      {[1, 2, 3, 4, 5].map((sao) => (
+                        <button
+                          key={sao}
+                          type="button"
+                          className={`btn btn-sm ${
+                            soSao >= sao
+                              ? "btn-warning"
+                              : "btn-outline-secondary"
+                          } me-1`}
+                          onClick={() => setSoSao(sao)}
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            fontSize: "14px",
+                            padding: "0",
+                            color: "white",
+                          }}
+                        >
+                          {soSao >= sao ? "★" : "★"}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Nút gửi đánh giá */}
+                    <button className="btn btn-primary" onClick={handleDanhGia}>
+                      Gửi đánh giá
+                    </button>
+                  </>
+                ) : (
+                  <p className="text-danger">Bạn phải đăng nhập để đánh giá.</p>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 };
-
 
 export default HousePopupDetail;

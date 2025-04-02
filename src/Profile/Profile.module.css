@@ -140,7 +140,7 @@
 }
 
 .save-button {
-  background-color: #00b63e;
+  background-color: var(--primary);
   color: white;
   border: none;
 }
@@ -168,7 +168,7 @@
 }
 
 .edit-button {
-  background-color: #00b63e;
+  background-color: var(--primary);
   color: white;
   border: none;
   width: 200px;

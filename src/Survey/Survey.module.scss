@@ -1,5 +1,6 @@
 .wrapper {
-  max-height: 670px;
+  // max-height: 670px;
+  height: 91vh;
   overflow-y: auto;
   overflow-x: hidden;
 
@@ -13,13 +14,20 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #00b63e;
+    background: #198c41;
     border-radius: 10px;
 
     &:hover {
       background: darken(#00b63e, 10%);
     }
   }
+}
+
+.seperate {
+  height: 1px;
+  width: 100%;
+  // margin-top: 30px;
+  background-color: #cccccc;
 }
 
 .content {
@@ -32,7 +40,7 @@
   align-items: center;
   padding: 0 30px;
   height: 60px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  // box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 }
 
 .heading_title {
@@ -46,10 +54,6 @@
   background-color: transparent;
 }
 
-.form_group p {
-  margin-bottom: auto;
-}
-
 .content_title {
   text-align: center;
   padding-top: 30px;
@@ -57,32 +61,27 @@
   font-weight: 600;
 }
 
-.form_input {
-  width: 100%;
-  height: 40px;
-  padding: 13px 12px;
-  font-size: 1.7rem;
-  border: 1px solid #ccc;
-  margin-top: 2px;
-  border-radius: 8px;
-}
-
 .option_item {
   display: grid;
   // gap: 1px 1px;
   grid-template-columns: repeat(2, 1fr);
   place-items: flex-start;
-  margin-top: 15px;
 }
 
 .option_item p {
-  font-size: 1.7rem;
+  font-size: 1.5rem;
 }
 
 .item {
   display: flex;
   font-size: 1.8rem;
   gap: 12px;
+  align-items: center;
+  height: 27px;
+}
+
+.option_title {
+  margin-bottom: -1px;
 }
 
 .item1 {
@@ -163,10 +162,12 @@
   border: 0px;
   font-weight: 700;
   box-shadow: 0px 0px 14px -7px #f09819;
-  background-image: linear-gradient(45deg,
-      #00b63e 0%,
-      #34d773 51%,
-      #00b63e 100%);
+  background-image: linear-gradient(
+    45deg,
+    #198c41 0%,
+    #34d773 51%,
+    #00b63e 100%
+  );
   box-shadow: 0px 0px 14px -7px #00b63e;
   cursor: pointer;
   user-select: none;
@@ -196,18 +197,19 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  margin-bottom: 3px;
 }
 
 .dien-tich-container1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .dien-tich-item {
   width: 48%;
-  height: 50px;
+  height: 40px;
   position: relative;
   display: flex;
 }
@@ -225,7 +227,7 @@
   font-size: 15px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  height: 40px;
+  height: 35px;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
@@ -238,13 +240,12 @@
 .form_title {
   font-size: 1.5rem;
   margin-bottom: 0rem;
-  margin-top: 10px;
   font-weight: 600;
 }
 
 .form_group {
   position: relative;
-  margin: 8px 0;
+  margin: 9px 0;
 }
 
 .form_input {
@@ -255,27 +256,54 @@
   border: 1px solid #ccc;
   outline: none;
   background: transparent;
+  margin: 2px 0 2px 0;
+  border-radius: 8px;
+  height: 35px;
+}
+
+/* Khi có lỗi, input có border màu đỏ */
+.form_input.error {
+  border-color: red;
+}
+
+/* Khi input có lỗi, label cũng đổi màu đỏ */
+.form_input.error ~ .form-intern-label {
+  color: red;
+}
+
+.form_input:focus {
+  outline: none;
+  background-color: #fff; // Thêm background màu trắng khi focus
+  box-shadow: 0 0 0 2px rgba(0, 182, 62, 0.2); // Thêm effect khi focus
+}
+
+.form_input.error:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2); // Thêm hiệu ứng màu đỏ khi focus
+  border-color: red; // Đảm bảo viền cũng có màu đỏ
 }
 
 .form-intern-label {
   position: absolute;
+  color: #757575;
+
   left: 12px;
-  top: 60%;
+  top: 52%;
   transform: translateY(-50%);
   transition: all 0.3s ease;
-  color: #99a9c2;
+  // color: #99a9c2;
   pointer-events: none;
-  font-size: 1.7rem;
+  font-size: 1.5rem;
 }
 
 // Khi input được focus hoặc có giá trị
-.form_input:focus+.form-intern-label,
-.form_input:not(:placeholder-shown)+.form-intern-label {
-  top: 19%;
-  font-size: 1.4rem;
+.form_input:focus + .form-intern-label,
+.form_input:not(:placeholder-shown) + .form-intern-label {
+  top: 6%;
+  font-size: 0.9rem;
   color: #00b63e;
   background: #fff;
-  padding: 0 5px;
+  padding: 0px 5px;
 }
 
 .form_input:focus {
@@ -283,9 +311,7 @@
 }
 
 .title_map {
-  font-size: 1.6rem;
-  margin-bottom: 15px;
-  margin-top: 18px;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
@@ -307,7 +333,7 @@
 
 .file-input-text {
   display: flex;
-  padding: 6px 10px;
+  padding: 3px 10px;
   font-size: 1.7rem;
   border: 1px solid #ccc;
   align-items: center;
@@ -326,12 +352,20 @@
   border-color: #ff4d4f !important;
 }
 
+.error-message-map {
+  color: #ff4d4f;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
 .error-message {
   color: #ff4d4f;
   font-size: 1.2rem;
   position: absolute;
-  top: 98.1%;
+  top: 90%;
   display: block;
+  z-index: 999;
 }
 
 .error-message-price {
@@ -350,7 +384,14 @@
   margin-top: 4px;
 }
 
-.idsv_input:focus+.form-intern-label+.form_input-id {
+// Khi input có lỗi, label cũng đổi màu đỏ và được đẩy lên
+.form_input.error + .form-intern-label {
+  color: red; // Đổi màu đỏ
+  background: #fff; // Giữ nền trắng
+  transition: all 0.3s ease; // Hiệu ứng chuyển đổi
+}
+
+.idsv_input:focus + .form-intern-label + .form_input-id {
   display: block;
 }
 
@@ -362,6 +403,10 @@
   gap: 10px;
   /* Khoảng cách giữa các ảnh */
   margin-top: 10px;
+}
+.preview-item {
+  position: relative;
+  display: inline-block;
 }
 
 .preview-image {
@@ -378,16 +423,48 @@
 }
 
 .preview-image:hover {
-  transform: scale(1.1);
   /* Hiệu ứng phóng to khi hover */
   border-color: #007bff;
   /* Viền đổi màu khi hover */
 }
 
+.delete-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-button:hover {
+  color: red;
+}
+
+.dien-tich-input {
+  &::placeholder {
+    color: #ccc; /* Màu mặc định của placeholder */
+  }
+
+  &.error::placeholder {
+    color: red; /* Màu đỏ khi có lỗi */
+  }
+}
 
 @media screen and (max-width: 480px) {
+  .btn {
+    margin: 20px auto 100px auto;
+  }
   .wrapper {
-    max-height: 100%;
+    height: 91vh;
   }
 
   .content {
@@ -435,7 +512,7 @@
     padding: 14px 12px;
     font-size: 1.7rem;
     border-radius: 8px;
-    margin-top: 10px;
+    margin-top: 6px;
     height: 40px;
   }
 
@@ -584,5 +661,15 @@
   .dien-tich-input:focus {
     border-color: #00b63e;
     outline: none;
+  }
+
+  .dien-tich-input {
+    &::placeholder {
+      color: #ccc; /* Màu mặc định của placeholder */
+    }
+
+    &.error::placeholder {
+      color: red; /* Màu đỏ khi có lỗi */
+    }
   }
 }

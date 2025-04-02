@@ -30,14 +30,14 @@
 }
 .login__container-btn {
   border: none;
-  color: #34d773;
+  color: var(--primary);
   font-size: 18px;
   font-weight: 600;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   cursor: pointer;
-  top: 42%;
+  top: 48%;
   padding: 6px 12px;
   width: 44%;
   background-color: rgba(52, 215, 115, 0.1);
@@ -130,7 +130,7 @@
   -moz-transition: all 0.4s linear;
   transition: all 0.4s linear;
   font-size: 1.4rem;
-  color: #34d773;
+  color: var(--primary);
 }
 
 .login__container-input:not(:placeholder-shown) + .login__container-label-one,
@@ -139,7 +139,7 @@
   padding-right: 3.5px;
   transition: all 0.4s linear;
   font-size: 1.4rem;
-  color: #34d773;
+  color: var(--primary);
 }
 
 .login__container-input:not(:-moz-placeholder-shown) + .login__container-label-two {
@@ -148,7 +148,7 @@
   -moz-transition: all 0.4s linear;
   transition: all 0.4s linear;
   font-size: 1.4rem;
-  color: #34d773;
+  color: var(--primary);
 }
 
 .login__container-input:not(:placeholder-shown) + .login__container-label-two,
@@ -157,11 +157,12 @@
   padding-right: 3.5px;
   transition: all 0.4s linear;
   font-size: 1.4rem;
-  color: #34d773;
+  color: var(--primary);
 }
 
 .login__container-input:focus {
-  border-bottom: 1px solid #34d773;
+  border-bottom: 1px solid var(--primary);
+  background-color: #fff;
 }
 
 .login__container-close {
@@ -264,7 +265,7 @@
 }
 
 .login_signup-desc {
-  color: #34d773;
+  color: var(--primary);
   font-size: 1.4rem;
 }
 

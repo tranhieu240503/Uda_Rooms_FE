@@ -1,0 +1,173 @@
+@charset "UTF-8";
+.chinhsuachitiet-edit-container {
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: center; */
+  gap: 20px;
+  /* padding: 20px; */
+  background: #f9f9f9;
+  border-radius: 8px;
+  position: relative; /* Đặt phần tử cha làm mốc */
+}
+
+.chinhsuachitiet-edit-info,
+.chinhsuachitiet-edit-images {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 48%;
+  width: 100%;
+}
+
+.chinhsuachitiet-title {
+  font-size: 15px; /* Tăng kích thước font */
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-align: center;
+  color: #000;
+}
+
+.chinhsuachitiet-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+  gap: 0 8px;
+}
+
+.tab {
+  padding: 6px 18px; /* Điều chỉnh padding cho lớn hơn */
+  font-size: 11px; /* Tăng kích thước chữ */
+  cursor: pointer;
+  border: none;
+  background: #ddd;
+  font-weight: 700;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.tab.active {
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.chinhsuachitiet-form-group {
+  display: flex;
+  margin-left: 8px;
+  font-size: 1.3rem;
+  flex-direction: column;
+}
+
+.text_label {
+  margin-bottom: 0rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-left: 138px;
+}
+
+.chinhsuachitiet-text {
+  margin-bottom: 0rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+.tiennghi-label,
+.thongtinthem-label {
+  font-size: 22px; /* Tăng kích thước chữ của tên tiện nghi và thông tin thêm, to hơn một chút */
+  font-weight: bold;
+}
+
+.tiennghi-item {
+  display: flex;
+}
+
+.thongtinthem-item {
+  display: flex;
+  align-items: center;
+}
+
+.tiennghi-item label,
+.thongtinthem-item label {
+  font-size: 11; /* Chỉnh kích thước chữ của từng tiện nghi và thông tin thêm nhỏ hơn tiêu đề */
+  font-weight: normal;
+}
+
+.tiennghi-container,
+.thongtinthem-container {
+  display: grid;
+  grid-template-columns: repeat(4, 0.5fr);
+  gap: 1px;
+  width: 72%;
+  margin: 0 auto;
+}
+
+.chinhsuachitiet-edit-container input[type=text] {
+  padding: 4px 6px;
+  font-size: 1.3rem;
+  width: 60%;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.update-btn {
+  padding: 7px 19px;
+  font-size: 1.1rem;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  background: #007bff;
+  position: absolute;
+  right: 72%;
+  bottom: 15%;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.update-btn:hover {
+  background: #0056b3;
+}
+
+.chinhsuachitiet-image-gallery {
+  text-align: center;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.image-container img {
+  max-width: 50%;
+  border-radius: 5px;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 10px;
+  right: 35px;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  border: none;
+  padding: 7px 12px; /* Điều chỉnh kích thước nút */
+  font-size: 11px; /* Tăng kích thước chữ */
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.delete-btn:hover {
+  background: red;
+}
+
+.chinhsuachitiet-no-images {
+  color: red;
+  font-weight: bold;
+  font-size: 18px; /* Tăng kích thước chữ */
+}/*# sourceMappingURL=chinhsuachitiet.module.css.map */

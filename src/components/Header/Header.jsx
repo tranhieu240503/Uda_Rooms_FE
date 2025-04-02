@@ -23,15 +23,17 @@ import Image from "../../CustomImage/CustomImage";
 import Avatar from "../../images/avatar.jpg";
 import { useNavigate } from "react-router-dom";
 import Profile from "../../Profile/Profile";
+import Map from "../Map/Map"; // Đường dẫn tới component Map
 
-const API_URL = "http://localhost:8000";
+const API_URL = process.env.REACT_APP_API_URL;
+// const API_URL = "https://bbfc-2405-4802-9603-89b0-3187-b0e5-aa4a-cb59.ngrok-free.app";
 
 const Header = ({
   isInnerVisible,
   onSearchClick,
   onReset,
   onFilter,
-  showModal,
+  showModalOne,
   onInner,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,6 +43,7 @@ const Header = ({
   const [userAvatar, setUserAvatar] = useState(null);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(true); // true: Login, false: Signup
 
   // Add click handler for content area
   const handleContentClick = () => {
@@ -142,6 +145,16 @@ const Header = ({
     setActiveContent("Filter");
   };
 
+  const handleOpenLogin = () => {
+    setActiveContent("Login");
+    setIsLogin(true); // Chuyển sang Login
+  };
+
+  const handleOpenSignup = () => {
+    setActiveContent("Signup");
+    setIsLogin(false); // Chuyển sang Signup
+  };
+
   const handleCloseProfile = () => {
     setActiveContent("Filter");
     refreshUserInfo(); // Làm mới thông tin người dùng khi đóng Profile
@@ -160,9 +173,11 @@ const Header = ({
   const getAvatarUrl = (avatarPath) => {
     if (!avatarPath) return "";
     // Loại bỏ dấu / ở đầu nếu có
-    const cleanPath = avatarPath.startsWith("/") ? avatarPath.slice(1) : avatarPath;
-  
-    return `${API_URL}/${cleanPath}`;
+    const cleanPath = avatarPath.startsWith("/")
+      ? avatarPath.slice(1)
+      : avatarPath;
+
+    return `${API_URL}/upload_avataruser/${cleanPath}`;
   };
 
   return (
@@ -178,7 +193,7 @@ const Header = ({
           <img src="images/UDA_logo.png" alt="Logo" />
           <div className="text">
             <h3 className="text-1">UDA MAP</h3>
-            <h4 className="tex-2">Bản đồ phòng trọ sinh viên UDA</h4>
+            <h4 className="tex-2">Bản đồ nhà trọ sinh viên UDA</h4>
           </div>
         </div>
         <div
@@ -196,9 +211,9 @@ const Header = ({
           <ul>
             <li onClick={() => handleContentChange("Survey")}>
               <FontAwesomeIcon icon={faHouseChimney} className="menu-icon" />
-              <span>Giới thiệu phòng trọ</span>
+              <span>Giới thiệu nhà trọ</span>
             </li>
-            <li>
+            <li onClick={() => navigate("/forum")}>
               <FontAwesomeIcon icon={faComments} className="menu-icon" />
               <span>Diễn đàn</span>
             </li>
@@ -251,12 +266,28 @@ const Header = ({
         )}
 
         {activeContent === "Survey" && (
-          <Survey onCloseSurvey={handleCloseSurvey} showModal={showModal} />
+          <Survey
+            onCloseSurvey={handleCloseSurvey}
+            showModalOne={showModalOne}
+            onReset={onReset}
+          />
         )}
 
-        {activeContent === "Login" && <Login onCloseLogin={handleCloseLogin} />}
+        {/* {activeContent === "Map" && (
+          <Map /> // Hiển thị component Map
+        )} */}
+
+        {activeContent === "Login" && (
+          <Login
+            onSwitchToSignup={handleOpenSignup}
+            onCloseLogin={handleCloseLogin}
+          />
+        )}
         {activeContent === "Signup" && (
-          <Signup onCloseSignup={handleCloseSignup} />
+          <Signup
+            onSwitchToLogin={handleOpenLogin}
+            onCloseSignup={handleCloseSignup}
+          />
         )}
 
         {activeContent === "Profile" && (

@@ -1,0 +1,169 @@
+@charset "UTF-8";
+.uda-tinhnang1 {
+  width: 100%;
+  background-color: #f9f9f9;
+}
+
+.uda-tinhnang1-title {
+  text-align: center;
+  font-size: 16px;
+  /* font-weight: bold; */
+  color: #333;
+}
+
+.uda-tinhnang1-table-wrapper {
+  overflow-x: auto;
+}
+
+.uda-tinhnang1-table {
+  width: 100%;
+  margin-top: 7px;
+  border-collapse: collapse;
+  background: white;
+  font-size: 11px;
+}
+
+.uda-tinhnang1-table th,
+.uda-tinhnang1-table td {
+  padding-left: 4px;
+  /* text-align: left; */
+  border: 0.1px solid #198c41;
+}
+
+.uda-tinhnang1-table th {
+  background-color: #198c41;
+  color: white;
+  /* font-size: 20px;  */
+  text-align: center;
+}
+
+.o-tuy-chinh {
+  margin-left: 30%;
+}
+
+.o-tuy-chinh-2 {
+  width: 80%;
+}
+
+.uda-tinhnang1-button {
+  padding: 0px 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  border-radius: 2px;
+  margin-left: 2px;
+}
+
+.uda-success {
+  background-color: #198c41;
+  color: white;
+}
+
+.uda-danger {
+  background-color: #dc3545;
+  color: white;
+  font-weight: 700;
+}
+
+.uda-edit {
+  background-color: #007bff;
+  color: white;
+  font-weight: 700;
+}
+
+.uda-delete {
+  background-color: #dc3545;
+  color: white;
+  font-weight: 700;
+}
+
+.uda-tinhnang1-empty {
+  text-align: center;
+  font-style: italic;
+  color: gray;
+  font-size: 18px;
+}
+
+.menu-buttons {
+  display: flex;
+  gap: 0px;
+}
+
+.menu-buttons button {
+  padding: 6px 11px;
+  font-weight: 600;
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 5px;
+  font-size: 11px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  width: 140px;
+}
+
+.menu-text {
+  font-size: 11px;
+  color: gray;
+}
+
+/* Dropdown */
+.menu-buttons {
+  font-weight: normal;
+}
+
+.menu-buttons .active {
+  background-color: #007bff;
+  color: white;
+}
+
+.thanh-menu-ngang {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.menu-buttons {
+  display: flex;
+  gap: 15px;
+  font-weight: 600;
+  margin-left: 45px;
+  margin-top: 10px;
+}
+
+.uda-tinhnang1-title {
+  flex-grow: 1;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 0rem;
+}
+
+.menu-text {
+  white-space: nowrap;
+}
+
+.menu-text {
+  margin-right: 50px;
+  color: #ff4d4d;
+}
+
+.separator {
+  width: 100%; /* Độ dày của gạch */
+  height: 2px; /* Chiều cao full div */
+  background-color: rgba(0, 0, 0, 0.178); /* Màu gạch */
+}
+
+.o-tuy-chinh-2 {
+  display: flex;
+  gap: 0px;
+  width: 100%;
+}
+
+.uda-tinhnang1-button {
+  flex: 1; /* Để các nút có kích thước bằng nhau */
+  text-align: center;
+}
+
+.chinhsuachitiet4-form-group label {
+  font-size: 18px;
+}/*# sourceMappingURL=Tinhnang1.module.css.map */

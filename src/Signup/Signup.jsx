@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames/bind";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-
+// import Login from "../../Login/Login";
 import styles from "./Signup.module.scss";
 import facebookIcon from "../images/google.png";
 import GoogleIcon from "../images/chorme.png";
-import { postSignup } from "../services/api"; // Change this import
+import { postSignup, postLogin } from "../services/api"; // Change this import
 import Image from "../CustomImage/CustomImage";
+import { ModalContext } from "../App";
 
 const cx = classNames.bind(styles);
 
-export default function Signup({ onCloseSignup }) {
+export default function Signup({ onCloseSignup, onSwitchToLogin }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,7 +25,8 @@ export default function Signup({ onCloseSignup }) {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
+  const [isLogin, setIsLogin] = useState(false);
+  const { showModal } = useContext(ModalContext);
   const handleClose = () => {
     if (onCloseSignup) {
       onCloseSignup();
@@ -89,9 +91,33 @@ export default function Signup({ onCloseSignup }) {
 
       if (response) {
         // Show success message
-        alert("Đăng ký tài khoản thành công!");
         handleClose(); // Close signup modal
-        navigate("/"); // Redirect to home page
+        // navigate("/"); // Redirect to home page
+     
+        
+          const response1 = await postLogin(signupData);
+
+          
+      if (response1 && response1.token) {
+        // Save token to localStorage
+        localStorage.setItem("token", response1.token);
+        // Save user info if available
+        if (response1.user) {
+          localStorage.setItem("user", JSON.stringify(response1.user));
+        }
+       
+        // navigate("/"); // Redirect to filter page after login
+        showModal(
+          "Đăng ký thành công!",
+          "Bạn đã tạo tài khoản thành công. "
+        );
+        setTimeout(() => {
+          window.location.reload();
+        },2000)
+       
+      } else {
+        throw new Error("Đăng nhập không thành công");
+      }
       }
     } catch (error) {
       console.error("Signup error:", error);
@@ -118,6 +144,7 @@ export default function Signup({ onCloseSignup }) {
       }));
     }
   };
+
   return (
     <div className={cx("login")} id="login-one">
       <div className={cx("login__container")}>
@@ -130,12 +157,12 @@ export default function Signup({ onCloseSignup }) {
         </button>
 
         <div className={cx("login__container-form")}>
-          <h3 className={cx("login__container-heading")}>Signup</h3>
+          <h3 className={cx("login__container-heading")}>Đăng ký</h3>
           <h3 className={cx("login__container-desc")}>
-            Hello Welcome My Website
+            Chào mừng đến với UDA MAP
           </h3>
           <p className={cx("login__container-introduce")}>
-            Create your account
+            Tạo tài khoản của bạn
           </p>
 
           <form onSubmit={handleSubmit} noValidate>
@@ -234,31 +261,14 @@ export default function Signup({ onCloseSignup }) {
             </button>
           </form>
 
-          <p className={cx("or")}>or</p>
-
-          <div className={cx("login__container-social")}>
-            <button className={cx("btn-social")}>
-              <Image
-                src={facebookIcon}
-                alt="Facebook"
-                className={cx("social-icon")}
-              />
-              Facebook
-            </button>
-            <button className={cx("btn-social")}>
-              <Image
-                src={GoogleIcon}
-                alt="Google"
-                className={cx("social-icon")}
-              />
-              Google
-            </button>
-          </div>
-
           <div className={cx("login__container-signup")}>
-            <p className={cx("login_signup-title")}>Already have an account?</p>
-            <a className={cx("login_signup-desc")} href="/signup">
-              Sign In
+            <p className={cx("login_signup-title")}>Bạn đã có tài khoản?</p>
+            <a
+              className={cx("signup_login-desc")}
+              onClick={onSwitchToLogin}
+              style={{ cursor: "pointer" }}
+            >
+              Đăng nhập
             </a>
           </div>
         </div>

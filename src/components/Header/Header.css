@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background-color: #34d773;
+  background-color: var(--primary);
 }
 
 .logo-list,
@@ -89,12 +89,16 @@
 .inner.hidden {
   transform: translateX(-100%);
   width: 0%;
+  display: none;
+  /* height: 0%; */
   opacity: 0;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .inner.visible {
   transform: translateX(0);
+  display: block;
+
   opacity: 1;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -106,11 +110,13 @@
 }
 
 .menu ul li:hover .menu-icon {
-  color: #00b63e;
+  color: var(--primary);
+  cursor: pointer;
 }
 
 .menu ul li:hover span {
-  color: #00b63e;
+  color: var(--primary);
+  cursor: pointer;
 }
 
 /* Style for logout item */

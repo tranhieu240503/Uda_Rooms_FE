@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react"; // Thêm useCallback
+import React, { useState, useEffect, useCallback, useContext } from "react"; // Thêm useCallback
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faCamera } from "@fortawesome/free-solid-svg-icons";
 import classNames from "classnames/bind";
@@ -7,9 +7,16 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import Image from "../CustomImage/CustomImage";
 import Avatar from "../images/avatar.jpg";
+import { ModalContext } from "../App";
 
 const cx = classNames.bind(styles);
-const API_URL = "http://localhost:8000";
+const API_URL = process.env.REACT_APP_API_URL;
+
+// Thêm interceptor để tự động thêm header ngrok
+// axios.interceptors.request.use((config) => {
+//   config.headers["ngrok-skip-browser-warning"] = "true";
+//   return config;
+// });
 
 const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
   const [userData, setUserData] = useState({
@@ -23,6 +30,7 @@ const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
+  const { showModal } = useContext(ModalContext);
 
   // Sử dụng useCallback để định nghĩa fetchUserData
   const fetchUserData = useCallback(async () => {
@@ -72,33 +80,54 @@ const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditedData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name === "phone") {
+      // Loại bỏ các ký tự không phải số
+      const numericValue = value.replace(/[^0-9]/g, "");
+
+      if (numericValue.length > 13) return;
+
+      // Cập nhật state nếu giá trị hợp lệ
+      setEditedData((prev) => ({
+        ...prev,
+        [name]: numericValue,
+      }));
+    } else {
+      setEditedData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
-  
-  
+
   // Handle save changes
   const handleSaveChanges = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
-  
-      const response = await axios.put(`${API_URL}/api/user/update`, editedData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
+
+      console.log("Dữ liệu gửi lên API:", editedData); // Log dữ liệu gửi lên
+
+      const response = await axios.put(
+        `${API_URL}/api/user/update`,
+        editedData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
       if (response.status === 200) {
         setUserData((prev) => ({ ...prev, ...editedData }));
-  
+
         if (response.data.token) {
           localStorage.setItem("token", response.data.token);
           window.dispatchEvent(new Event("storage")); // Cập nhật UI toàn bộ app
         }
-  
+
         setIsEditing(false);
-        alert("Cập nhật thông tin thành công!");
+        showModal(
+          "Cập nhật thành công!",
+          "Thông tin cá nhân của bạn đã được lưu."
+        );
       }
     } catch (error) {
       console.error("Lỗi cập nhật thông tin:", error);
@@ -115,17 +144,17 @@ const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-  
+
     const imageURL = URL.createObjectURL(file);
     setImagePreview(imageURL); // Hiển thị ảnh xem trước ngay lập tức
-  
+
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
-  
+
       const formData = new FormData();
       formData.append("avatar", file);
-  
+
       const response = await axios.put(
         `${API_URL}/api/user/upload-avatar`,
         formData,
@@ -136,24 +165,29 @@ const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
           },
         }
       );
-  
+
       if (response.status === 200) {
-        const newAvatarURL = `${API_URL}${response.data.avatar}?t=${Date.now()}`; // Thêm timestamp tránh cache
-  
+        const newAvatarURL = `${API_URL}/upload_avataruser/${
+          response.data.avatar
+        }?t=${Date.now()}`;
+        console.log("New Avatar URL:", response.data.avatar);
         // Cập nhật avatar ngay lập tức
         setUserData((prev) => ({
           ...prev,
-          avatar: newAvatarURL, 
+          avatar: newAvatarURL,
         }));
-  
+
         setImagePreview(newAvatarURL); // Cập nhật ảnh xem trước để phản ánh thay đổi ngay
-  
+
         // Gửi avatar mới cho component cha nếu cần
         if (onAvatarUpdate) {
           onAvatarUpdate(newAvatarURL);
         }
-  
-        alert("Cập nhật ảnh đại diện thành công!");
+
+        showModal(
+          "Cập nhật thành công!",
+          "Ảnh đại diện của bạn đã được cập nhật thành công."
+        );
       }
     } catch (error) {
       console.error("Error uploading avatar:", error);
@@ -161,7 +195,7 @@ const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
       setImagePreview(null);
     }
   };
-  
+
   return (
     <div className={cx("profile")}>
       <header className={cx("header")}>
@@ -174,35 +208,35 @@ const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
       <div className={cx("content")}>
         <div className={cx("avatar-section")}>
           <div className={cx("avatar-container")}>
-          {imagePreview ? (
-  <Image
-    src={imagePreview}
-    alt="Profile Preview"
-    className={cx("avatar")}
-  />
-) : userData.avatar ? (
-  <>
-    {console.log(
-      "URL ảnh trong frontend:",
-      `${API_URL}${userData.avatar}`
-    )}
-    <Image
-      src={`${API_URL}${userData.avatar}`}
-      alt="Profile"
-      className={cx("avatar")}
-      onError={(e) => {
-        console.log("Lỗi tải ảnh:", e);
-        e.target.src = Avatar; // Hiển thị ảnh mặc định nếu không tải được
-      }}
-    />
-  </>
-) : (
-  <img 
-  src={`${userData.avatar}?t=${new Date().getTime()}`} 
-  alt="Avatar" 
-  className="avatar"
-/>
-)}
+            {imagePreview ? (
+              <Image
+                src={imagePreview}
+                alt="Profile Preview"
+                className={cx("avatar")}
+              />
+            ) : userData.avatar ? (
+              <>
+                {console.log(
+                  "URL ảnh trong frontend:",
+                  `${API_URL}${userData.avatar}`
+                )}
+                <Image
+                  src={`${API_URL}/upload_avataruser/${userData.avatar}`}
+                  alt="Profile"
+                  className={cx("avatar")}
+                  onError={(e) => {
+                    console.log("Lỗi tải ảnh:", e);
+                    e.target.src = Avatar; // Hiển thị ảnh mặc định nếu không tải được
+                  }}
+                />
+              </>
+            ) : (
+              <img
+                src={`${userData.avatar}?t=${new Date().getTime()}`}
+                alt="Avatar"
+                className="avatar"
+              />
+            )}
             {isEditing && (
               <label className={cx("avatar-upload")}>
                 <FontAwesomeIcon icon={faCamera} />
@@ -226,6 +260,7 @@ const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
               value={isEditing ? editedData.fullname : userData.fullname}
               onChange={handleInputChange}
               readOnly={!isEditing}
+              maxLength="40"
             />
           </div>
 
