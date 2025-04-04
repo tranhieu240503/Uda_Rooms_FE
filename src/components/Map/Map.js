@@ -154,7 +154,7 @@ const Map = ({ filteredData1, onCoordinatesr, onShowRouting }) => {
           console.log("📥 Lấy dữ liệu từ API...");
           const formatted1 = await fetchTienIch();
           const data = await fetchLocations();
-          const formatted = formatHouses(data);
+          const formatted = formatHouses(data.filter(loc=>loc.trangThai === 1));
           setFilteredHouses(formatted);
         }
       } catch (error) {

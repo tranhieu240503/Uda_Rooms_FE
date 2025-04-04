@@ -3,7 +3,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  // gap: 20px;
   padding: 0 10px;
   height: calc(100vh - 80px); /* Trừ đi chiều cao của header */
   overflow-y: auto; /* Tạo thanh cuộn dọc riêng cho filter */

@@ -298,11 +298,11 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
                 </tr>
                 <tr>
                   <th>Giá điện</th>
-                  <td>{house.tienDien.toLocaleString()} VND/kWh</td>
+                  <td>{house.tienDien?house.tienDien.toLocaleString(): "0"} -{" "} VND/kWh</td>
                 </tr>
                 <tr>
                   <th>Giá nước</th>
-                  <td>{house.tienNuoc.toLocaleString()} VND/m³</td>
+                  <td>{house.tienNuoc ? house.tienNuoc.toLocaleString(): "0"} -{" "}VND/m³</td>
                 </tr>
                 <tr>
                   <th>Khoảng cách tới trường</th>
@@ -482,8 +482,8 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
   <img
     src={
       danhGia.User?.avatar
-        ? `${process.env.REACT_APP_API_URL}/upload_avataruser/${danhGia.User.avatar}`
-        : `${process.env.REACT_APP_API_URL}/upload_avataruser/avatar-mac-dinh.png`
+        ? `${API_URL}/upload_avataruser/${danhGia.User.avatar}`
+        : `${API_URL}/upload_avataruser/avater-mac-dinh.jpg`
     }
     alt="Avatar"
     width={30}

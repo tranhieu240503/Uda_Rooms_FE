@@ -364,7 +364,7 @@ const Survey = ({ onCloseSurvey, showModalOne, onReset }) => {
 
       // Gửi thông tin trọ trước
       const infoResponse = await axios.post(
-        "API_URL/api/nha-tro",
+        `${API_URL}/api/nha-tro`,
         dataToSend,
         {
           headers: { "Content-Type": "application/json" },
@@ -382,7 +382,7 @@ const Survey = ({ onCloseSurvey, showModalOne, onReset }) => {
         formDataImage.append("nhaTroId", infoResponse.data.nhaTro.id);
 
         const imageResponse = await axios.post(
-          "API_URL/api/upload-multiple",
+          `${API_URL}/api/upload-multiple`,
           formDataImage,
           { headers: { "Content-Type": "multipart/form-data" } }
         );

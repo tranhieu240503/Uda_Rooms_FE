@@ -58,7 +58,7 @@ const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
         fullname: user.fullname || "Chưa cập nhật",
         email: user.email || "Chưa cập nhật",
         avatar: user.avatar || null, // Thêm fallback cho avatar
-        phone: user.phone || "Chưa cập nhật",
+        phone: user.phone || null,
         gender: user.gender || "Chưa cập nhật",
       });
     } catch (error) {

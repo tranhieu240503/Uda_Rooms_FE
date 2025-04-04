@@ -209,16 +209,7 @@ const Header = ({
 
         <div className={`menu ${isMenuOpen ? "open" : ""}`}>
           <ul>
-            <li onClick={() => handleContentChange("Survey")}>
-              <FontAwesomeIcon icon={faHouseChimney} className="menu-icon" />
-              <span>Giới thiệu nhà trọ</span>
-            </li>
-            <li onClick={() => navigate("/forum")}>
-              <FontAwesomeIcon icon={faComments} className="menu-icon" />
-              <span>Diễn đàn</span>
-            </li>
-
-            {!isLoggedIn ? (
+          {!isLoggedIn ? (
               <>
                 <li onClick={() => handleContentChange("Login")}>
                   <FontAwesomeIcon icon={faSignInAlt} className="menu-icon" />
@@ -249,7 +240,7 @@ const Header = ({
                       className="user-avatar"
                     />
                   )}
-                  <span>{fullName || "Loading..."}</span>
+                  <span>{fullName || "Người dùng"}</span>
                 </li>
                 <li onClick={handleLogout}>
                   <FontAwesomeIcon icon={faSignOutAlt} className="menu-icon" />
@@ -257,6 +248,16 @@ const Header = ({
                 </li>
               </>
             )}
+            <li onClick={() => handleContentChange("Survey")}>
+              <FontAwesomeIcon icon={faHouseChimney} className="menu-icon" />
+              <span>Giới thiệu nhà trọ</span>
+            </li>
+            <li onClick={() => navigate("/forum")}>
+              <FontAwesomeIcon icon={faComments} className="menu-icon" />
+              <span>Diễn đàn</span>
+            </li>
+
+            
           </ul>
         </div>
       </header>

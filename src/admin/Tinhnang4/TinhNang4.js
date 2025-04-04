@@ -20,6 +20,7 @@ const TinhNang4 = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [activeButton, setActiveButton] = useState("all");
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const getData = async () => {
@@ -245,7 +246,7 @@ const TinhNang4 = () => {
                   {onfix.images.map((img, index) => (
                     <div key={index} className={styles["image-container"]}>
                       <img
-                        src={`http://192.168.137.1:8000${img.image_url}`}
+                        src={`${API_URL}${img.image_url}`}
                         alt={`Hình ảnh ${index + 1}`}
                       />
                     </div>
