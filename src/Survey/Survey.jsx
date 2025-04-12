@@ -229,8 +229,8 @@ const Survey = ({ onCloseSurvey, showModalOne, onReset }) => {
           max === 0
             ? "Vui lòng nhập giá tối đa"
             : min > max
-            ? "Giá tối thiểu không được lớn hơn giá tối đa"
-            : "",
+              ? "Giá tối thiểu không được lớn hơn giá tối đa"
+              : "",
       }));
       return;
     }
@@ -245,8 +245,8 @@ const Survey = ({ onCloseSurvey, showModalOne, onReset }) => {
           sdt: !value
             ? "Vui lòng nhập số điện thoại"
             : !validatePhone(value)
-            ? "Số điện thoại không hợp lệ"
-            : "",
+              ? "Số điện thoại không hợp lệ"
+              : "",
         }));
         break;
       case "diaChi":
@@ -320,21 +320,21 @@ const Survey = ({ onCloseSurvey, showModalOne, onReset }) => {
       sdt: !formData.sdt
         ? "Vui lòng nhập số điện thoại"
         : !validatePhone(formData.sdt)
-        ? "Số điện thoại không hợp lệ"
-        : "",
+          ? "Số điện thoại không hợp lệ"
+          : "",
       diaChi: !formData.diaChi.trim() ? "Vui lòng nhập địa chỉ" : "",
       giaMin: !formData.giaMin ? "Vui lòng nhập giá tối thiểu" : "",
       giaMax: !formData.giaMax
         ? "Vui lòng nhập giá tối đa"
         : parseInt(formData.giaMin.replace(/\./g, ""), 10) >
           parseInt(formData.giaMax.replace(/\./g, ""), 10)
-        ? "Giá tối thiểu không được lớn hơn giá tối đa"
-        : "",
+          ? "Giá tối thiểu không được lớn hơn giá tối đa"
+          : "",
       soPhong: !formData.soPhong
         ? "Vui lòng nhập số phòng"
         : formData.soPhong <= 0
-        ? "Số phòng phải lớn hơn 0"
-        : "",
+          ? "Số phòng phải lớn hơn 0"
+          : "",
       lat: !formData.lat ? "Vui lòng chọn tọa độ trên bản đồ" : "",
       lon: !formData.lon ? "Vui lòng chọn tọa độ trên bản đồ" : "",
     };

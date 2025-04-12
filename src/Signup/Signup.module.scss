@@ -1,23 +1,27 @@
 .login {
   background-color: rgba(0, 0, 0, 0.8);
   animation: opa 0.5s linear;
+
   &__container {
     margin: auto;
     position: relative;
     animation: sca 0.5s linear;
   }
+
   &__container-form {
     width: 100%;
     background-color: #fff;
     height: 670px;
     padding: 25px 33px;
   }
+
   &__container-heading {
     color: #0f1824;
     text-align: center;
     font-size: 24px;
     font-weight: 600;
   }
+
   &__container-input {
     width: 100%;
     border: none;
@@ -43,6 +47,7 @@
     background-color: rgba(52, 215, 115, 0.1);
   }
 }
+
 .form {
   &-group {
     margin-bottom: 30px;
@@ -132,8 +137,8 @@
   height: 100%;
 }
 
-.login__container-input:not(:placeholder-shown) + .login__container-label-one,
-.login__container-input:focus + .login__container-label-one {
+.login__container-input:not(:placeholder-shown)+.login__container-label-one,
+.login__container-input:focus+.login__container-label-one {
   transform: translateY(-20px);
   padding-right: 3.5px;
   transition: all 0.4s linear;
@@ -141,8 +146,8 @@
   color: var(--primary);
 }
 
-.login__container-input:not(:placeholder-shown) + .login__container-label-two,
-.login__container-input:focus + .login__container-label-two {
+.login__container-input:not(:placeholder-shown)+.login__container-label-two,
+.login__container-input:focus+.login__container-label-two {
   transform: translateY(-20px);
   padding-right: 3.5px;
   transition: all 0.4s linear;
@@ -150,8 +155,8 @@
   color: var(--primary);
 }
 
-.login__container-input:not(:placeholder-shown) + .login__container-label-there,
-.login__container-input:focus + .login__container-label-there {
+.login__container-input:not(:placeholder-shown)+.login__container-label-there,
+.login__container-input:focus+.login__container-label-there {
   transform: translateY(-20px);
   padding-right: 3.5px;
   transition: all 0.4s linear;
@@ -201,6 +206,7 @@
   margin-top: 106px;
   font-size: 1.7rem;
 }
+
 // tôi muốn một cái bên trái một cái bên phải
 .or::after {
   content: "";
@@ -212,6 +218,7 @@
   background-color: #ccc;
   z-index: 1;
 }
+
 // tôi muốn một cái bên trái một cái bên phải
 .or::before {
   content: "";
@@ -280,11 +287,14 @@
 }
 
 .submit-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: #ff4d4f;
   text-align: center;
   position: absolute;
   padding: 8px;
-  top: 90%;
+  // top: 90%;
   background-color: #fff2f0;
   border: 1px solid #ffccc7;
   border-radius: 4px;

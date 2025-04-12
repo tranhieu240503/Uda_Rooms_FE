@@ -18,6 +18,24 @@ import "./Map.css";
 // Vị trí mặc định của trường Đại học Đông Á
 const universityLocation = [16.032, 108.2212];
 
+
+
+
+
+
+const FlyToUniversity = ({ trigger }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (trigger) {
+      map.flyTo(universityLocation, 14); // 👈 bạn có thể chỉnh zoom ở đây
+    }
+  }, [trigger, map]);
+
+  return null;
+};
+
+
 // Custom Control Button
 const TienIchToggleControl = ({ onToggle, show }) => {
   const map = useMap();
@@ -154,7 +172,7 @@ const Map = ({ filteredData1, onCoordinatesr, onShowRouting }) => {
           console.log("📥 Lấy dữ liệu từ API...");
           const formatted1 = await fetchTienIch();
           const data = await fetchLocations();
-          const formatted = formatHouses(data.filter(loc=>loc.trangThai === 1));
+          const formatted = formatHouses(data.filter(loc => loc.trangThai === 1));
           setFilteredHouses(formatted);
         }
       } catch (error) {
@@ -189,6 +207,8 @@ const Map = ({ filteredData1, onCoordinatesr, onShowRouting }) => {
         fullscreenControl={true}
         style={{ width: "100%", height: "100%" }}
       >
+        <FlyToUniversity trigger={filteredData1} />
+
         <TienIchToggleControl
           onToggle={() => setShowTienIch(!showTienIch)}
           show={showTienIch}
@@ -208,7 +228,7 @@ const Map = ({ filteredData1, onCoordinatesr, onShowRouting }) => {
             <div className="popup-container">
               <div className="popup-image">
                 <img
-                  src="https://cdn.nhanlucnganhluat.vn/uploads/images/360e09f7/source/2018-11/dai-hoc-a-15260318284302087536677.jpg"
+                  src="daihoctoiyeu.jpg"
                   alt="logo"
                   style={{ width: "100%", height: "40%" }}
                 />
@@ -236,6 +256,33 @@ const Map = ({ filteredData1, onCoordinatesr, onShowRouting }) => {
             key={index}
             position={[house.latitude, house.longitude]}
             icon={getHouseIconByStatus(house.conPhong)}
+            eventHandlers={{
+              popupopen: (e) => {
+                try {
+                  const map = e.target._map;
+                  if (!map) return;
+            
+                  const isMobile = window.innerWidth <= 768;
+                  if (!isMobile) return;
+                  map.panBy([0, -1000])
+                  // setTimeout(() => {
+                  //   const markerLatLng = e.target.getLatLng();
+                  //   const markerPoint = map.latLngToContainerPoint(markerLatLng);
+                  //   const markerY = markerPoint.y;
+                  //   const screenHeight = window.innerHeight;
+            
+                  //   if (markerY < screenHeight / 2) {
+                  //     map.panBy([0, -screenHeight * 0.75]);
+                  //   }
+                  // }, 100);
+                } catch (err) {
+                  console.error("Lỗi khi xử lý panBy:", err);
+                }
+              },
+            }}
+            
+            
+            
           >
             <Popup>
               <CustomPopup
@@ -261,26 +308,26 @@ const Map = ({ filteredData1, onCoordinatesr, onShowRouting }) => {
                   )}
                 >
                   <Popup>
-                    
-                      <div className="popup-tienich">
-                        <h2  style={{textAlign:"center"}}>{item.TienIch?.tenTienIch || "Chưa có tên"}</h2>
-                        {/* Lấy địa chỉ từ bảng TienIchXungQuanh */}
-                        <p>
-                          <span
-                            style={{ fontWeight: "bold", fontSize: "1.1em" }}
-                          >
-                            Tên:{" "}
-                          </span>
-                          {item.tenTienIch || "Không có tên tiện ích"} <br />
-                          <span
-                            style={{ fontWeight: "bold", fontSize: "1.1em" }}
-                          >
-                            Địa chỉ:{" "}
-                          </span>
-                          {item.diaChi || "Đang cập nhật"}
-                        </p>
-                      </div>
-                    
+
+                    <div className="popup-tienich">
+                      <h2 style={{ textAlign: "center" }}>{item.TienIch?.tenTienIch || "Chưa có tên"}</h2>
+                      {/* Lấy địa chỉ từ bảng TienIchXungQuanh */}
+                      <p>
+                        <span
+                          style={{ fontWeight: "bold", fontSize: "1.1em" }}
+                        >
+                          Tên:{" "}
+                        </span>
+                        {item.tenTienIch || "Không có tên tiện ích"} <br />
+                        <span
+                          style={{ fontWeight: "bold", fontSize: "1.1em" }}
+                        >
+                          Địa chỉ:{" "}
+                        </span>
+                        {item.diaChi || "Đang cập nhật"}
+                      </p>
+                    </div>
+
                   </Popup>
                 </Marker>
               )

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { addThongTinThem, addTienNghi, deleteThongTinThem, deleteTienNghi, fetchThongTinThem, fetchTienNghi } from "../../services/api";
 import styles from "./TinhNang2.module.scss"; // Import SCSS module
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
 
 const TinhNang2 = () => {
     const [tienNghiList, setTienNghiList] = useState([]);
     const [thongTinThemList, setThongTinThemList] = useState([]);
     const [activeTab, setActiveTab] = useState("tiennghi");
     const [newData, setNewData] = useState("");
+    const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
     useEffect(() => {
         loadData();
@@ -47,20 +50,47 @@ const TinhNang2 = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm("Bạn có chắc chắn muốn xóa?")) {
-            try {
-                if (activeTab === "tiennghi") {
-                    await deleteTienNghi(id);
-                    setTienNghiList(tienNghiList.filter(item => item.id !== id));
-                } else {
-                    await deleteThongTinThem(id);
-                    setThongTinThemList(thongTinThemList.filter(item => item.id !== id));
-                }
-            } catch (error) {
-                alert("Lỗi khi xóa dữ liệu!");
+    // const handleDelete = async (id) => {
+    //     if (window.confirm("Bạn có chắc chắn muốn xóa?")) {
+    //         try {
+    //             if (activeTab === "tiennghi") {
+    //                 await deleteTienNghi(id);
+    //                 setTienNghiList(tienNghiList.filter(item => item.id !== id));
+    //             } else {
+    //                 await deleteThongTinThem(id);
+    //                 setThongTinThemList(thongTinThemList.filter(item => item.id !== id));
+    //             }
+    //         } catch (error) {
+    //             alert("Lỗi khi xóa dữ liệu!");
+    //         }
+    //     }
+    // };
+
+    const handleDeleteClick = (id) => {
+        setItemToDelete(id);
+        setIsConfirmModalVisible(true); // Hiển thị ConfirmModal
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            if (activeTab === "tiennghi") {
+                await deleteTienNghi(itemToDelete);
+                setTienNghiList(tienNghiList.filter(item => item.id !== itemToDelete));
+            } else {
+                await deleteThongTinThem(itemToDelete);
+                setThongTinThemList(thongTinThemList.filter(item => item.id !== itemToDelete));
             }
+        } catch (error) {
+            alert("Lỗi khi xóa dữ liệu!");
+        } finally {
+            setIsConfirmModalVisible(false); // Đóng ConfirmModal
+            setItemToDelete(null); // Xóa ID đã lưu
         }
+    };
+
+    const handleCancelDelete = () => {
+        setIsConfirmModalVisible(false); // Đóng ConfirmModal
+        setItemToDelete(null); // Xóa ID đã lưu
     };
 
     return (
@@ -86,7 +116,7 @@ const TinhNang2 = () => {
                     <table className={styles["feature-table"]}>
                         <thead className={styles["feature-thead"]}>
                             <tr>
-                                <th>#</th>
+                                <th>Id</th>
                                 <th>{activeTab === "tiennghi" ? "Tên Tiện Nghi" : "Thông Tin Thêm"}</th>
                                 <th>Hành động</th>
                             </tr>
@@ -100,7 +130,7 @@ const TinhNang2 = () => {
                                         <td>
                                             <button
                                                 className={styles["feature-delete-btn"]}
-                                                onClick={() => handleDelete(item.id)}
+                                                onClick={() =>handleDeleteClick(item.id)}
                                             >
                                                 Xóa
                                             </button>
@@ -128,6 +158,14 @@ const TinhNang2 = () => {
                 />
                 <button className={styles["feature-add-btn"]} onClick={handleSubmit}>Thêm</button>
             </div>
+            {isConfirmModalVisible && (
+                <ConfirmModal
+                    title="Xác nhận xóa"
+                    message="Bạn có chắc chắn muốn xóa mục này?"
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
+                />
+            )}
         </div>
     );
 };

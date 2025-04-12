@@ -6,6 +6,7 @@ import {
   handleDuyetPostAPI,
 } from "../../services/api";
 import styles from "./TinhNang4.module.scss"; // Import SCSS module
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"; // Import ConfirmModal
 
 const truncateText = (text, maxLength) => {
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
@@ -18,6 +19,9 @@ const TinhNang4 = () => {
   const [filteredLocations, setFilteredLocations] = useState([]);
   const [selectedId, setSelectedId] = useState(""); // State lưu ID tiện ích
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [locationToDelete, setLocationToDelete] = useState(null); // Lưu ID cần xóa
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false); // Hiển thị ConfirmModal
 
   const [activeButton, setActiveButton] = useState("all");
   const API_URL = process.env.REACT_APP_API_URL;
@@ -55,9 +59,41 @@ const TinhNang4 = () => {
     }
   };
 
-  const xoaNhaTro = async (id) => {
+  // const xoaNhaTro = async (id) => {
+  //   if (!window.confirm("Bạn có chắc chắn muốn xóa trọ này này?")) return;
+
+  //   try {
+  //     const response = await deletePost(id);
+  //     if (response && response.status === 200) {
+  //       let updatedLocations = await fetchPostAll();
+  //       setLocations(updatedLocations);
+
+  //       if (activeButton !== "all") {
+  //         updatedLocations = updatedLocations.filter(
+  //           (loc) => loc.status === (activeButton === "approved")
+  //         );
+  //       }
+  //       if (selectedId !== "") {
+  //         updatedLocations = updatedLocations.filter(
+  //           (loc) => loc.loaiPost === selectedId
+  //         );
+  //       }
+  //       setFilteredLocations(updatedLocations);
+  //     }
+  //   } catch (error) {
+  //     console.error("Lỗi khi xóa:", error);
+  //   }
+  // };
+
+
+  const xoaNhaTro = (id) => {
+    setLocationToDelete(id); // Lưu ID nhà trọ cần xóa
+    setIsConfirmModalVisible(true); // Hiển thị ConfirmModal
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      const response = await deletePost(id);
+      const response = await deletePost(locationToDelete);
       if (response && response.status === 200) {
         let updatedLocations = await fetchPostAll();
         setLocations(updatedLocations);
@@ -76,9 +112,16 @@ const TinhNang4 = () => {
       }
     } catch (error) {
       console.error("Lỗi khi xóa:", error);
+    } finally {
+      setIsConfirmModalVisible(false); // Đóng ConfirmModal
+      setLocationToDelete(null); // Xóa ID đã lưu
     }
   };
 
+  const handleCancelDelete = () => {
+    setIsConfirmModalVisible(false); // Đóng ConfirmModal
+    setLocationToDelete(null); // Xóa ID đã lưu
+  };
   const handleHienChiTiet = (id) => {
     const postchitiet = locations.filter((location) => location.id === id);
     setOnFix(postchitiet[0]);
@@ -172,9 +215,9 @@ const TinhNang4 = () => {
           </thead>
           <tbody>
             {locations.length > 0 ? (
-              filteredLocations.map((location) => (
+              filteredLocations.map((location,index) => (
                 <tr key={location.id}>
-                  <td>{location.id}</td>
+                  <td>{index+1}</td>
                   <td>{location.author.fullname}</td>
                   <td>{truncateText(location.content, 90)}</td>
                   <td>{location.images.length} hình</td>
@@ -217,6 +260,14 @@ const TinhNang4 = () => {
               </tr>
             )}
           </tbody>
+          {isConfirmModalVisible && (
+        <ConfirmModal
+          title="Xác nhận xóa"
+          message="Bạn có chắc chắn muốn xóa bài đăng này?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
         </table>
       </div>
       {isModalVisible && (

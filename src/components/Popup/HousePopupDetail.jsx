@@ -1,8 +1,9 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { jwtDecode } from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Modal from "../Modal/Modal";
@@ -21,7 +22,7 @@ import "./HousePopupDetail.css";
 
 const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
   const [activeTab, setActiveTab] = useState("info");
-
+  const popupRef = useRef(null);
   const [houseState, sethouseState] = useState(null);
   const [images, setImages] = useState([]);
   const [danhGiaList, setDanhGiaList] = useState([]);
@@ -38,13 +39,13 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const showModalOne = () => {
     setTimeout(() => {
-    setIsModalVisible(true); 
-    setTimeout(() => {
-      setIsModalVisible(false);
-      console.log("Modal is now hidden");
-    }, 4000);
-  }, 50); // Đặt timeout ngắn để đảm bảo React nhận ra sự thay đổi
-};
+      setIsModalVisible(true);
+      setTimeout(() => {
+        setIsModalVisible(false);
+        console.log("Modal is now hidden");
+      }, 4000);
+    }, 50); // Đặt timeout ngắn để đảm bảo React nhận ra sự thay đổi
+  };
 
   console.log("🏠 Dữ liệu nhà trọ:", house);
   const id = house.id;
@@ -55,6 +56,7 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) settokenstatus(true);
+
   }, []); //
 
   const handleDanhGia = async () => {
@@ -93,6 +95,7 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
 
   // Lấy danh sách thông tin thêm từ api
   useEffect(() => {
+
     const fetchThongTinThemList = async () => {
       try {
         const response = await fetchThongTinThem();
@@ -105,6 +108,8 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
     };
 
     fetchThongTinThemList();
+
+
   }, []);
 
   // Lấy ds tiện nghi từ API
@@ -179,7 +184,10 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
     fetchHouse();
   }, [id]);
 
-  const handleTabChange = (tab) => setActiveTab(tab);
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+
+  }
 
   // Lọc ra danh sách nội thất
   const tienNghiArray = Array.isArray(tienNghiList) ? tienNghiList : [];
@@ -231,7 +239,7 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
             onClick={() => handleTabChange("image")}
             className={`tab-btn ${activeTab === "image" ? "active" : ""}`}
           >
-            Hình ảnh
+            Ảnh
           </button>
           <button
             onClick={() => handleTabChange("danhgia")}
@@ -243,11 +251,10 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
                 {[...Array(5)].map((_, index) => (
                   <span
                     key={index}
-                    className={`star ${
-                      index < (trungBinhSao ? Math.round(trungBinhSao) : 5)
-                        ? "yellow"
-                        : "white"
-                    }`}
+                    className={`star ${index < (trungBinhSao ? Math.round(trungBinhSao) : 5)
+                      ? "yellow"
+                      : "white"
+                      }`}
                   >
                     <FontAwesomeIcon icon={faStar} />
                   </span>
@@ -298,11 +305,11 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
                 </tr>
                 <tr>
                   <th>Giá điện</th>
-                  <td>{house.tienDien?house.tienDien.toLocaleString(): "0"} -{" "} VND/kWh</td>
+                  <td>{house.tienDien ? house.tienDien.toLocaleString() : "0"} -{" "} VND/kWh</td>
                 </tr>
                 <tr>
                   <th>Giá nước</th>
-                  <td>{house.tienNuoc ? house.tienNuoc.toLocaleString(): "0"} -{" "}VND/m³</td>
+                  <td>{house.tienNuoc ? house.tienNuoc.toLocaleString() : "0"} -{" "}VND/m³</td>
                 </tr>
                 <tr>
                   <th>Khoảng cách tới trường</th>
@@ -360,21 +367,19 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
                             tienNghiArray.some((nt) => nt.id === item.id);
                           return (
                             <td key={item.id}>
-                              <span
-                                className={`icon ${isAvailable ? "yes" : "no"}`}
-                              >
-                                {isAvailable ? "✔️" : "❌"}
-                              </span>{" "}
+                              <span className="icon" style={{ display: "inline-block", width: "20px" }}>
+                                {isAvailable ? "✔️" : ""}
+                              </span>
                               {item.tenTienNghi}
                             </td>
                           );
                         })}
-                        {/* Nếu hàng chỉ có 1 cột thì thêm 1 <td> để đủ 2 cột */}
                         {row.length < 2 && <td></td>}
                       </tr>
                     ))}
                 </tbody>
               </table>
+
 
               <p>
                 <b>Thông tin thêm:</b>
@@ -390,9 +395,9 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
                         return (
                           <td key={item.id}>
                             <span
-                              className={`icon ${isAvailable ? "yes" : "no"}`}
+                              className="icon" style={{ display: "inline-block", width: "20px" }}
                             >
-                              {isAvailable ? "✔️" : "❌"}
+                              {isAvailable ? "✔️" : ""}
                             </span>{" "}
                             {item.thongTinThem}
                           </td>
@@ -408,10 +413,10 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
               <p>
                 <b>Tiện ích xung quanh:</b>
               </p>
-              <table className="custom-table ">
+              <table className="custom-table">
                 <thead>
                   <tr>
-                    <th>STT</th>
+                    {/* <th className="stt">STT</th> */}
                     <th>Tên tiện ích</th>
                     <th>Khoảng cách</th>
                   </tr>
@@ -420,17 +425,19 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
                   {Array.isArray(tienIch) &&
                     tienIch.map((item, index) => (
                       <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{item.tenTienIch}</td>
+                        {/* <td className="stt">{index + 1}</td> */}
+                        <td style={{ textAlign: "left" }}>{item.tenTienIch}</td>
                         <td>{(item.distance / 1000).toFixed(2)} km</td>
                       </tr>
                     ))}
                 </tbody>
               </table>
+
               {/* </div> */}
 
               <p style={{ color: "red" }}>
-                <b>Ghi chú:</b>
+
+                <b>{house.ghiChu ? "Ghi chú" : ""}</b>
               </p>
               <p>{house.ghiChu ? house.ghiChu.toLocaleString() : ""}</p>
             </div>
@@ -440,16 +447,16 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
         {activeTab === "image" && (
           <>
             {images.length > 0 ? (
-  <Carousel showThumbs={false} infiniteLoop autoPlay>
-    {images.map((img, index) => (
-      <div key={index}>
-        <img src={img.url} alt={`Hình ảnh ${index + 1}`} />
-      </div>
-    ))}
-  </Carousel>
-) : (
-  <p style={{ color: "red" }}>Không có hình ảnh</p>
-)}
+              <Carousel showThumbs={false} infiniteLoop autoPlay>
+                {images.map((img, index) => (
+                  <div key={index}>
+                    <img src={img.url} alt={`Hình ảnh ${index + 1}`} />
+                  </div>
+                ))}
+              </Carousel>
+            ) : (
+              <p style={{ color: "red" }}>Không có hình ảnh</p>
+            )}
 
           </>
         )}
@@ -479,20 +486,20 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
                     <div className="d-flex align-items-center justify-content-between mb-2">
                       {/* Avatar + Tên (Bên trái) */}
                       <div className="d-flex align-items-center">
-  <img
-    src={
-      danhGia.User?.avatar
-        ? `${API_URL}/upload_avataruser/${danhGia.User.avatar}`
-        : `${API_URL}/upload_avataruser/avater-mac-dinh.jpg`
-    }
-    alt="Avatar"
-    width={30}
-    height={30}
-    className="rounded-circle me-2"
-    style={{ objectFit: "cover" }}  
-  />
-  <strong>{danhGia.User?.fullname || "Ẩn danh"}</strong>
-</div>
+                        <img
+                          src={
+                            danhGia.User?.avatar
+                              ? `${API_URL}/upload_avataruser/${danhGia.User.avatar}`
+                              : `${API_URL}/upload_avataruser/avater-mac-dinh.jpg`
+                          }
+                          alt="Avatar"
+                          width={30}
+                          height={30}
+                          className="rounded-circle me-2"
+                          style={{ objectFit: "cover" }}
+                        />
+                        <strong>{danhGia.User?.fullname || "Ẩn danh"}</strong>
+                      </div>
 
 
                       {/* Thời gian (Bên phải) */}
@@ -536,11 +543,10 @@ const HousePopupDetail = ({ house, onCoordinatesr, onShowRouting }) => {
                         <button
                           key={sao}
                           type="button"
-                          className={`btn btn-sm ${
-                            soSao >= sao
-                              ? "btn-warning"
-                              : "btn-outline-secondary"
-                          } me-1`}
+                          className={`btn btn-sm ${soSao >= sao
+                            ? "btn-warning"
+                            : "btn-outline-secondary"
+                            } me-1`}
                           onClick={() => setSoSao(sao)}
                           style={{
                             width: "30px",

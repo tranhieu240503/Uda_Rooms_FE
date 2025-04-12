@@ -267,7 +267,7 @@ const Forum = ({ onCloseForum }) => {
 
       // 1. Tạo bài viết trước
       const postResponse = await axios.post(
-       `${API_URL}/api/create`,
+        `${API_URL}/api/create`,
         {
           user_id: userId,
           content: postContent,
@@ -321,8 +321,8 @@ const Forum = ({ onCloseForum }) => {
       console.error("📌 Response data:", error.response?.data);
       console.error("📌 Status:", error.response?.status);
 
-      showModal( "Cảnh báo!", "Có lỗi xảy ra khi đăng bài!", "error");
-      
+      showModal("Cảnh báo!", "Có lỗi xảy ra khi đăng bài!", "error");
+
     } finally {
       setIsSubmitting(false);
     }
@@ -552,7 +552,7 @@ const Forum = ({ onCloseForum }) => {
       // Hiển thị thông báo xóa thành công
       showModal("Xóa bình luận thành công!", "Bình luận của bạn đã được xóa.");
     } catch (error) {
-      showModal( "Cảnh báo!", "Có lỗi xảy ra khi xóa bình luận!", "error");
+      showModal("Cảnh báo!", "Có lỗi xảy ra khi xóa bình luận!", "error");
     }
   };
 

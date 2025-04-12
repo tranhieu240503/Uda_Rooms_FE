@@ -135,7 +135,7 @@
   width: 100%;
   border-collapse: collapse;
   background: white;
-  font-size: 11px;
+  font-size: 12px;
   text-align: center;
 }
 
@@ -162,7 +162,6 @@ select {
   text-align: center;
   appearance: none; /* Ẩn giao diện mặc định */
   cursor: pointer;
-  margin-top: -20px;
   padding: 0; /* Loại bỏ padding mặc định */
 }
 
@@ -190,7 +189,7 @@ select option {
   outline: none;
   appearance: none;
   color: white;
-  font-size: 13px;
+  font-size: 10px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -318,4 +317,50 @@ select option {
 
 .tinhnang3-box-4 button:hover {
   background-color: #0056b3;
+}
+
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-select {
+  padding: 4px 12px;
+    font-size: 1.3rem;
+    text-align: left;
+
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+    color: #333;
+}
+
+.form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
+
+.form-select option {
+  font-size: 1.2rem;
+  color: #333;
+  background-color: #fff;
+}
+
+.form-select:hover {
+  border-color: #0056b3;
+}
+
+.form-select:disabled {
+  background-color: #f9f9f9;
+  color: #aaa;
+  cursor: not-allowed;
 }

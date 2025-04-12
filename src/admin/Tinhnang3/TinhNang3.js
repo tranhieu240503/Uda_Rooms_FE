@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useContext} from "react";
+import { ModalContext } from "../../App";
+
 import {
   addTienIch,
   addTienIchXungQuanh,
@@ -7,6 +9,7 @@ import {
   fetchTienIch,
   fetchTienIchAll,
 } from "../../services/api";
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
 import styles from "./TinhNang3.module.scss"; // Import SCSS module
 
 const InputField = ({ label, value, onChange, placeholder, type = "text" }) => (
@@ -31,7 +34,10 @@ const TinhNang3 = () => {
   const [newLoaiTienIch, setNewLoaiTienIch] = useState("");
   const [editingTienIch, setEditingTienIch] = useState(null);
   const [selectedId, setSelectedId] = useState("");
+  const [newTienIchLoai, setNewTienIchLoai] = useState("");
   const [selectedtype, setSelectedType] = useState([]);
+  const { showModal } = useContext(ModalContext);
+  
   const [newTienIch, setNewTienIch] = useState({
     tenTienIch: "",
     loai: "",
@@ -39,6 +45,14 @@ const TinhNang3 = () => {
     lat: "",
     lon: "",
   });
+
+  const [isConfirmModalVisibleTienIch, setIsConfirmModalVisibleTienIch] = useState(false);
+  const [isConfirmModalVisibleTienIchXungQuanh, setIsConfirmModalVisibleTienIchXungQuanh] = useState(false);
+  
+  const [itemToDelete, setItemToDelete] = useState(null); 
+  const [deleteType, setDeleteType] = useState(""); 
+
+  
 
   const handleChange = (event) => {
     const findid = Number(event.target.value);
@@ -68,6 +82,8 @@ const TinhNang3 = () => {
         const updatedData = await fetchTienIch();
         setLocations(updatedData.data);
         setSelectedType(updatedData.data);
+        showModal("Thêm loại tiện ích xung quanh mới thành công!");
+
       }
     } catch (error) {
       alert(error.message || "Lỗi khi thêm tiện ích");
@@ -81,23 +97,68 @@ const TinhNang3 = () => {
     if (response.status === 201) {
       setLocationsALL((prev) => [...prev, response.data.data]);
       setNewLoaiTienIch("");
+      showModal("Thêm loại tiện ích mới thành công!");
+
     }
   };
 
-  const handleXoaTienIch = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa tiện ích này?")) return;
+  // const handleXoaTienIch = async (id) => {
+  //   if (!window.confirm("Bạn có chắc chắn muốn xóa tiện ích này?")) return;
+  //   try {
+  //     await deleteTienIch(id);
+  //     setLocationsALL((prev) => prev.filter((tienIch) => tienIch.id !== id));
+  //   } catch (error) {
+  //     alert("Lỗi khi xóa tiện ích");
+  //   }
+  // };
+
+  // const handleXoaTienIchXungQuanh = async (id) => {
+  //   if (!window.confirm("Bạn có chắc chắn muốn xóa tiện ích này?")) return;
+  //   try {
+  //     await deleteTienIchXungQuanh(id);
+  //     const updatedData = await fetchTienIch();
+  //     setLocations(updatedData.data);
+  //     const findid = Number(selectedId);
+  //     if (findid === 0) {
+  //       setSelectedType(updatedData.data);
+  //     } else {
+  //       setSelectedType(
+  //         updatedData.data.filter((loc) => loc.TienIch.id === findid)
+  //       );
+  //     }
+  //   } catch (error) {
+  //     alert("Lỗi khi xóa tiện ích");
+  //   }
+  // };
+
+  const handleDeleteClick = (id, type) => {
+    setItemToDelete(id); // Lưu ID tiện ích cần xóa
+    setDeleteType(type); // Lưu loại tiện ích cần xóa
+  
+    if (type === "tienIch") {
+      setIsConfirmModalVisibleTienIch(true); // Hiển thị modal cho loại tiện ích
+    } else if (type === "tienIchXungQuanh") {
+      setIsConfirmModalVisibleTienIchXungQuanh(true); // Hiển thị modal cho tiện ích xung quanh
+    }
+  };
+  
+  // Xử lý xác nhận xóa cho loại tiện ích
+  const handleConfirmDeleteTienIch = async () => {
     try {
-      await deleteTienIch(id);
-      setLocationsALL((prev) => prev.filter((tienIch) => tienIch.id !== id));
+      await deleteTienIch(itemToDelete);
+      setLocationsALL((prev) => prev.filter((tienIch) => tienIch.id !== itemToDelete));
     } catch (error) {
-      alert("Lỗi khi xóa tiện ích");
+      alert("Lỗi khi xóa loại tiện ích");
+    } finally {
+      setIsConfirmModalVisibleTienIch(false); // Đóng modal loại tiện ích
+      setItemToDelete(null); // Xóa ID đã lưu
     }
   };
-
-  const handleXoaTienIchXungQuanh = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa tiện ích này?")) return;
+  
+  // Xử lý xác nhận xóa cho tiện ích xung quanh
+  const handleConfirmDeleteTienIchXungQuanh = async () => {
     try {
-      await deleteTienIchXungQuanh(id);
+      await deleteTienIchXungQuanh(itemToDelete);
       const updatedData = await fetchTienIch();
       setLocations(updatedData.data);
       const findid = Number(selectedId);
@@ -109,9 +170,26 @@ const TinhNang3 = () => {
         );
       }
     } catch (error) {
-      alert("Lỗi khi xóa tiện ích");
+      alert("Lỗi khi xóa tiện ích xung quanh");
+    } finally {
+      setIsConfirmModalVisibleTienIchXungQuanh(false); // Đóng modal tiện ích xung quanh
+      setItemToDelete(null); // Xóa ID đã lưu
     }
   };
+  
+  // Xử lý hủy bỏ cho loại tiện ích
+  const handleCancelDeleteTienIch = () => {
+    setIsConfirmModalVisibleTienIch(false); // Đóng modal loại tiện ích
+    setItemToDelete(null); // Xóa ID đã lưu
+  };
+  
+  // Xử lý hủy bỏ cho tiện ích xung quanh
+  const handleCancelDeleteTienIchXungQuanh = () => {
+    setIsConfirmModalVisibleTienIchXungQuanh(false); // Đóng modal tiện ích xung quanh
+    setItemToDelete(null); // Xóa ID đã lưu
+  };
+
+ 
 
   useEffect(() => {
     const getData = async () => {
@@ -179,16 +257,16 @@ const TinhNang3 = () => {
               </thead>
               <tbody>
                 {selectedtype.length > 0 ? (
-                  selectedtype.map((location) => (
+                  selectedtype.map((location, index) => (
                     <tr key={location.id}>
-                      <td>{location.id}</td>
+                      <td>{index+1}</td>
                       <td>{location.tenTienIch}</td>
                       <td>{location.diaChi}</td>
                       <td>{location.TienIch?.tenTienIch}</td>
                       <td>
                         <button
                           className={styles["btn-primary"]}
-                          onClick={() => handleXoaTienIchXungQuanh(location.id)}
+                          onClick={() => handleDeleteClick(location.id, "tienIchXungQuanh")}
                         >
                           Xóa
                         </button>
@@ -204,6 +282,14 @@ const TinhNang3 = () => {
                 )}
               </tbody>
             </table>
+            {isConfirmModalVisibleTienIchXungQuanh && (
+  <ConfirmModal
+    title="Xác nhận xóa"
+    message="Bạn có chắc chắn muốn xóa tiện ích xung quanh này?"
+    onConfirm={handleConfirmDeleteTienIchXungQuanh}
+    onCancel={handleCancelDeleteTienIchXungQuanh}
+  />
+)}
           </div>
 
           <div className={styles["tinhnang3-box-2"]}>
@@ -220,14 +306,37 @@ const TinhNang3 = () => {
                 placeholder="Nhập tên tiện ích"
               />
 
-              <InputField
+              {/* <InputField
                 label="Loại"
                 value={newTienIch.loai}
                 onChange={(e) =>
                   setNewTienIch({ ...newTienIch, loai: e.target.value })
                 }
                 placeholder="Nhập loại tiện ích"
-              />
+              /> */}
+
+<div className={styles["form-group"]}>
+  <label>Loại</label>
+  <select
+    className={styles["form-select"]}
+    value={newTienIchLoai} // Liên kết với state riêng
+    onChange={(e) => {
+      const selectedValue = e.target.value;
+      setNewTienIchLoai(selectedValue); // Cập nhật state riêng
+      setNewTienIch({ ...newTienIch, loai: selectedValue }); // Cập nhật newTienIch.loai
+    }}
+  >
+    {locationsALL.length > 0 ? (
+      locationsALL.map((tienIch) => (
+        <option key={tienIch.id} value={tienIch.id}>
+          {tienIch.tenTienIch}
+        </option>
+      ))
+    ) : (
+      <option>Không có dữ liệu</option>
+    )}
+  </select>
+</div>
 
               <InputField
                 label="Địa Chỉ"
@@ -289,7 +398,7 @@ const TinhNang3 = () => {
                       <td>
                         <button
                           className={styles["btn-primary"]}
-                          onClick={() => handleXoaTienIch(tienIch.id)}
+                          onClick={() => handleDeleteClick(tienIch.id, "tienIch")}
                         >
                           Xóa
                         </button>
@@ -304,6 +413,16 @@ const TinhNang3 = () => {
                   </tr>
                 )}
               </tbody>
+              {isConfirmModalVisibleTienIch && (
+  <ConfirmModal
+    title="Xác nhận xóa"
+    message="Bạn có chắc chắn muốn xóa loại tiện ích này?"
+    onConfirm={handleConfirmDeleteTienIch}
+    onCancel={handleCancelDeleteTienIch}
+  />
+)}
+
+
             </table>
           </div>
 

@@ -93,38 +93,38 @@ export default function Signup({ onCloseSignup, onSwitchToLogin }) {
         // Show success message
         handleClose(); // Close signup modal
         // navigate("/"); // Redirect to home page
-     
-        
-          const response1 = await postLogin(signupData);
 
-          
-      if (response1 && response1.token) {
-        // Save token to localStorage
-        localStorage.setItem("token", response1.token);
-        // Save user info if available
-        if (response1.user) {
-          localStorage.setItem("user", JSON.stringify(response1.user));
+
+        const response1 = await postLogin(signupData);
+
+
+        if (response1 && response1.token) {
+          // Save token to localStorage
+          localStorage.setItem("token", response1.token);
+          // Save user info if available
+          if (response1.user) {
+            localStorage.setItem("user", JSON.stringify(response1.user));
+          }
+
+          // navigate("/"); // Redirect to filter page after login
+          showModal(
+            "Đăng ký thành công!",
+            "Bạn đã tạo tài khoản thành công. "
+          );
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000)
+
+        } else {
+          throw new Error("Đăng nhập không thành công");
         }
-       
-        // navigate("/"); // Redirect to filter page after login
-        showModal(
-          "Đăng ký thành công!",
-          "Bạn đã tạo tài khoản thành công. "
-        );
-        setTimeout(() => {
-          window.location.reload();
-        },2000)
-       
-      } else {
-        throw new Error("Đăng nhập không thành công");
-      }
       }
     } catch (error) {
       console.error("Signup error:", error);
       setErrors({
         submit:
           error.response?.data?.message ||
-          "Đăng ký không thành công. Vui lòng thử lại.",
+          "Đăng ký thất bại. Vui lòng thử Email khác.",
       });
     } finally {
       setIsLoading(false);

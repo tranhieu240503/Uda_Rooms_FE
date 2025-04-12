@@ -494,3 +494,50 @@ export const deletePost = async (id) => {
     return null; // Trả về null nếu có lỗi
   }
 };
+
+// Lấy người dùng theo ID
+export const fetchUserById = async (id) => {
+  try {
+    const data = await axios.get(`${API_URL}/api/user/${id}`);
+    console.log("Người dùng:", data);
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+export const updateUserInfo = async (id, userData) => {
+  try {
+    const response = await axios.put(`${API_URL}/api/user/admin/${id}`, userData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log("Dữ liệu trả về từ API:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Lỗi khi cập nhật người dùng:",
+      error.response ? error.response.data : error.message
+    );
+    throw error.response?.data || { message: error.message };
+  }
+};
+// Lấy danh sách người dùng (admin)
+export const fetchAllUsers = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/api/user/list/all`);
+    console.log("Người dùng:", response.data);
+    return response.data; 
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+// Xóa người dùng (admin)
+export const handleDeleteUser = async (userId) => {
+  try {
+    const response = await axios.delete(`${API_URL}/api/user/${userId}`);
+    return response;
+  } catch (error) {
+    console.error(error.message);
+  }
+};

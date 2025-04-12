@@ -209,7 +209,7 @@ const Header = ({
 
         <div className={`menu ${isMenuOpen ? "open" : ""}`}>
           <ul>
-          {!isLoggedIn ? (
+            {!isLoggedIn ? (
               <>
                 <li onClick={() => handleContentChange("Login")}>
                   <FontAwesomeIcon icon={faSignInAlt} className="menu-icon" />
@@ -257,7 +257,7 @@ const Header = ({
               <span>Diễn đàn</span>
             </li>
 
-            
+
           </ul>
         </div>
       </header>

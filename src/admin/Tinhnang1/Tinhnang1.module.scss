@@ -16,17 +16,16 @@
 
 .uda-tinhnang1-table {
   width: 100%;
-  margin-top: 7px;
   border-collapse: collapse;
   background: white;
-  font-size: 11px;
+  font-size: 8px;
 }
 
 .uda-tinhnang1-table th,
 .uda-tinhnang1-table td {
   padding-left: 4px;
   /* text-align: left; */
-  border: 0.1px solid #198c41;
+  border: 0.1px solid #333;
 }
 
 .uda-tinhnang1-table th {
@@ -36,7 +35,7 @@
   text-align: center;
 }
 .o-tuy-chinh {
-  margin-left: 30%;
+  margin-left: 20%;
 }
 .o-tuy-chinh-2 {
   width: 80%;
@@ -45,7 +44,7 @@
   padding: 0px 5px;
   border: none;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 9px;
   border-radius: 2px;
   margin-left: 2px;
 }
@@ -158,4 +157,71 @@
 }
 .chinhsuachitiet4-form-group label {
   font-size: 18px;
+}
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%; /* Đảm bảo phù hợp với layout */
+}
+
+.select-wrapper select {
+  width: 100%;
+  padding-right: 5px; /* Chừa khoảng trống để tránh đè lên mũi tên */
+  background: transparent;
+  border: none;
+  outline: none;
+  appearance: none;
+  color: white;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+
+.select-wrapper::after {
+  content: " ▼"; /* Mũi tên xuống */
+  font-size: 12px;
+  color: white;
+  position: absolute;
+  right: 5px; /* Điều chỉnh xa hơn nếu bị đè */
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+tr{
+  font-size: 9.5px;
+}
+
+.search-input {
+  margin: 8px 0;
+  display: flex
+;
+  align-items: center;
+  width: 18%;
+  gap: 0 12px;
+  border: 1px solid #ccc;
+  margin-right: 15px;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.search-input input {
+  width: 100%;
+  padding: 2px 14px;
+  font-size: 14px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.search-input input:focus {
+  border-color: #198c41; 
+}
+
+.search-input input::placeholder {
+  color: #aaa; 
+  font-style: italic;
+}
+.icon_search{
+  margin-right: 10px;
 }
