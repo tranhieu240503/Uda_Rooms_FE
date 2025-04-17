@@ -1,6 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import axios from "axios";
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
+import { ModalContext } from "../../App";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCamera,
+  faChevronDown,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   customroom,
   DeleteImage,
@@ -12,12 +22,18 @@ import {
 import styles from "./chinhsuachitiet.module.scss"; // Import SCSS module
 
 const Chinhsuachitiet = ({ onFix }) => {
+    const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
+      const { showModal } = useContext(ModalContext);
+      const [isConfirmDeleteImageVisible, setIsConfirmDeleteImageVisible] = useState(false); // Hiển thị ConfirmModal
+      const [imageToDelete, setImageToDelete] = useState(null);
   const [formDataSend, setFormDataSend] = useState({});
   const [datatiennghifull, setdatatiennghifull] = useState([]);
   const [datatthongtinthem, setdatatthongtinthem] = useState([]);
   const [images, setImages] = useState([]);
   const [activeTab, setActiveTab] = useState("thongtintro");
   const [roomStatus, setRoomStatus] = useState(true); // true -> Còn phòng, false -> Hết phòng
+  const [selectedImages, setSelectedImages] = useState([]);
+  const API_URL = process.env.REACT_APP_API_URL;
   const toggleStatus = () => {
     setFormDataSend((prevState) => ({
       ...prevState,
@@ -32,6 +48,7 @@ const Chinhsuachitiet = ({ onFix }) => {
         const datatiennghi = await fetchTienNghi();
         const datathongtinthem = await fetchThongTinThem();
         const hinhanh = await fetchImage(onFix);
+        console.log(hinhanh)
         setImages(hinhanh);
         setFormDataSend({
           tenNhaTro: response.data.tenNhaTro || "",
@@ -54,6 +71,25 @@ const Chinhsuachitiet = ({ onFix }) => {
     };
     getRoom();
   }, [onFix]);
+
+//them anh
+  const handleImageChange = (event) => {
+    const files = Array.from(event.target.files); // Lấy danh sách ảnh được chọn
+    // Kiểm tra nếu tổng số hình ảnh vượt quá 6
+    if (selectedImages.length + files.length > 6) {
+      showModal(
+        "Cảnh báo!",
+        "Bạn chỉ được tải lên tối đa 6 hình ảnh.",
+        "warning"
+      );
+      return;
+    }
+    setSelectedImages((prevImages) => [...prevImages, ...files]); // Thêm vào state
+  };
+//xóa
+  const handleDeleteImage1 = (index) => {
+    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
 
   const formatCurrency = (value) => {
     if (!value) return ""; // Nếu giá trị rỗng, trả về chuỗi rỗng
@@ -86,23 +122,74 @@ const Chinhsuachitiet = ({ onFix }) => {
     }));
   };
 
-  const handleDeleteImage = async (imageId) => {
+  const handleDeleteImageClick = (imageId) => {
+    setImageToDelete(imageId); // Lưu thông tin hình ảnh cần xóa
+    setIsConfirmDeleteImageVisible(true); // Hiển thị ConfirmModal
+  };
+
+  const handleConfirmDeleteImage = async () => {
     try {
-      await DeleteImage(imageId);
-      setImages(images.filter((img) => img.id !== imageId));
+      if (imageToDelete) {
+        await DeleteImage(onFix, imageToDelete); // Gọi API xóa hình ảnh
+        const hinhanh = await fetchImage(onFix); // Lấy danh sách hình ảnh mới
+        setImages(hinhanh);
+      }
     } catch (error) {
       console.error("Lỗi xóa ảnh:", error);
+    } finally {
+      setIsConfirmDeleteImageVisible(false); // Đóng ConfirmModal
+      setImageToDelete(null); // Xóa thông tin hình ảnh đã lưu
     }
   };
 
-  const handleSubmit = async () => {
+  const handleCancelDeleteImage = () => {
+    setIsConfirmDeleteImageVisible(false); // Đóng ConfirmModal
+    setImageToDelete(null); // Xóa thông tin hình ảnh đã lưu
+  };
+
+  const handleSubmitImage = async () => {
     try {
+      // Tải hình ảnh lên server
+      const formData = new FormData();
+      selectedImages.forEach((image) => {
+        if (!(image instanceof File)) {
+          console.error("Dữ liệu không hợp lệ:", image);
+          return;
+        }
+        formData.append("images", image);
+      });
+      formData.append("nhaTroId",onFix);
+      // Gửi hình ảnh lên server
+      console.log(formData)
+      const uploadResponse = await axios.post(
+        `${API_URL}/api/upload-multiple`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+  
+      const hinhanh = await fetchImage(onFix);
+
+      setImages(hinhanh );
+      // Gửi dữ liệu khác lên server
       console.log("Dữ liệu gửi đi:", formDataSend);
-      await customroom(onFix, formDataSend);
-      alert("Cập nhật thành công!");
+      showModal("Thêm hình ảnh thành công")
+      setSelectedImages([]);
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
-      alert("Cập nhật thất bại!");
+      showModal("Thêm hình ảnh thất bại","Hãy chọn ảnh mà bạn muốn thêm", "error")
+    }
+  }
+
+  const handleSubmit = async () => {
+    try {
+      // Gửi dữ liệu khác lên server
+      console.log("Dữ liệu gửi đi:", formDataSend);
+      await customroom(onFix, formDataSend);
+      showModal("Cập nhật thông tin trọ thành công!")
+    } catch (error) {
+      console.error("Lỗi cập nhật:", error);
+      showModal("Cập nhật thông tin trọ thất bại","Lỗi", "error")
+
     }
   };
 
@@ -316,7 +403,7 @@ const Chinhsuachitiet = ({ onFix }) => {
                   <img src={img.url} alt={`Hình ảnh ${index + 1}`} />
                   <button
                     className={styles["delete-btn"]}
-                    onClick={() => handleDeleteImage(img.id)}
+                    onClick={() => handleDeleteImageClick(img.filename)}
                   >
                     Xóa
                   </button>
@@ -329,6 +416,59 @@ const Chinhsuachitiet = ({ onFix }) => {
             </p>
           )}
         </div>
+
+        {isConfirmDeleteImageVisible && (
+        <ConfirmModal
+          title="Xác nhận xóa"
+          message="Bạn có chắc chắn muốn xóa hình ảnh này?"
+          onConfirm={handleConfirmDeleteImage}
+          onCancel={handleCancelDeleteImage}
+        />
+      )}
+
+         <div className={styles["form_group"]}>
+                  <label className={styles["file-input-label"]}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className={styles["form_input", "file-input"]}
+                      onChange={handleImageChange}
+                    />
+                    <span className={styles["file-input-text"]}>
+                      Thêm ảnh phòng trọ
+                      <FontAwesomeIcon icon={faCamera} />
+                    </span>
+                  </label>
+        
+                  {/* Hiển thị ảnh đã chọn */}
+                  <div className={styles["preview-container"]}>
+                    {selectedImages.length > 0 &&
+                      selectedImages.map((image, index) => {
+                        const imageUrl = URL.createObjectURL(image);
+                        return (
+                          <div key={index} className={styles["preview-item"]}>
+                            <img
+                              src={imageUrl}
+                              alt={`preview-${index}`}
+                              className={styles["preview-image"]}
+                              onLoad={() => URL.revokeObjectURL(imageUrl)} // Giải phóng bộ nhớ sau khi tải ảnh
+                            />
+                            <button
+                              type="button"
+                              className={styles["delete-button"]}
+                              onClick={() => handleDeleteImage1(index)}
+                            >
+                              ✖
+                            </button>
+                          </div>
+                        );
+                      })}
+                  </div>
+          </div>
+          <button className={styles["update-btn"]} onClick={handleSubmitImage}>
+          Cập nhật
+        </button>
       </div>
     </div>
   );

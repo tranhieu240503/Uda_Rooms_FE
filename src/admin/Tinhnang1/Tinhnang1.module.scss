@@ -21,11 +21,20 @@
   font-size: 8px;
 }
 
+
+.uda-tinhnang1-table2 {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 8px;
+}
+
 .uda-tinhnang1-table th,
 .uda-tinhnang1-table td {
   padding-left: 4px;
   /* text-align: left; */
   border: 0.1px solid #333;
+  font-size: 12px;
 }
 
 .uda-tinhnang1-table th {
@@ -190,9 +199,9 @@
   pointer-events: none;
 }
 
-tr{
-  font-size: 9.5px;
-}
+// tr{
+//   font-size: 9.5px;
+// }
 
 .search-input {
   margin: 8px 0;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,useContext} from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { ModalContext } from "../../App";
 
 import {
@@ -37,7 +37,7 @@ const TinhNang3 = () => {
   const [newTienIchLoai, setNewTienIchLoai] = useState("");
   const [selectedtype, setSelectedType] = useState([]);
   const { showModal } = useContext(ModalContext);
-  
+
   const [newTienIch, setNewTienIch] = useState({
     tenTienIch: "",
     loai: "",
@@ -48,11 +48,11 @@ const TinhNang3 = () => {
 
   const [isConfirmModalVisibleTienIch, setIsConfirmModalVisibleTienIch] = useState(false);
   const [isConfirmModalVisibleTienIchXungQuanh, setIsConfirmModalVisibleTienIchXungQuanh] = useState(false);
-  
-  const [itemToDelete, setItemToDelete] = useState(null); 
-  const [deleteType, setDeleteType] = useState(""); 
 
-  
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [deleteType, setDeleteType] = useState("");
+
+
 
   const handleChange = (event) => {
     const findid = Number(event.target.value);
@@ -66,7 +66,11 @@ const TinhNang3 = () => {
 
   const handleAddTienIchXungQuanh = async () => {
     if (!newTienIch.tenTienIch.trim() || !newTienIch.loai.trim()) {
-      return alert("Vui lòng nhập đầy đủ tên tiện ích và loại!");
+      showModal(
+        "Lỗi khi thêm tiện ích!",
+        "Vui lòng nhập đầy đủ thông tin tiện ích xung quanh.",
+        "error"
+      );
     }
 
     try {
@@ -86,13 +90,21 @@ const TinhNang3 = () => {
 
       }
     } catch (error) {
-      alert(error.message || "Lỗi khi thêm tiện ích");
+      showModal(
+        "Lỗi khi thêm tiện ích xung quanh!",
+        "Vui lòng nhập đầy đủ thông tin tiện ích.",
+        "error"
+      );
     }
   };
 
   const handleAddTienIch = async () => {
     if (!newLoaiTienIch.trim())
-      return alert("Tên loại tiện ích không được để trống!");
+      return showModal(
+        "Lỗi khi them tiện ích!",
+        "Vui lòng nhập đầy đủ thông tin tiện ích.",
+        "error"
+      );
     const response = await addTienIch({ tenTienIch: newLoaiTienIch });
     if (response.status === 201) {
       setLocationsALL((prev) => [...prev, response.data.data]);
@@ -134,14 +146,14 @@ const TinhNang3 = () => {
   const handleDeleteClick = (id, type) => {
     setItemToDelete(id); // Lưu ID tiện ích cần xóa
     setDeleteType(type); // Lưu loại tiện ích cần xóa
-  
+
     if (type === "tienIch") {
       setIsConfirmModalVisibleTienIch(true); // Hiển thị modal cho loại tiện ích
     } else if (type === "tienIchXungQuanh") {
       setIsConfirmModalVisibleTienIchXungQuanh(true); // Hiển thị modal cho tiện ích xung quanh
     }
   };
-  
+
   // Xử lý xác nhận xóa cho loại tiện ích
   const handleConfirmDeleteTienIch = async () => {
     try {
@@ -154,7 +166,7 @@ const TinhNang3 = () => {
       setItemToDelete(null); // Xóa ID đã lưu
     }
   };
-  
+
   // Xử lý xác nhận xóa cho tiện ích xung quanh
   const handleConfirmDeleteTienIchXungQuanh = async () => {
     try {
@@ -176,20 +188,20 @@ const TinhNang3 = () => {
       setItemToDelete(null); // Xóa ID đã lưu
     }
   };
-  
+
   // Xử lý hủy bỏ cho loại tiện ích
   const handleCancelDeleteTienIch = () => {
     setIsConfirmModalVisibleTienIch(false); // Đóng modal loại tiện ích
     setItemToDelete(null); // Xóa ID đã lưu
   };
-  
+
   // Xử lý hủy bỏ cho tiện ích xung quanh
   const handleCancelDeleteTienIchXungQuanh = () => {
     setIsConfirmModalVisibleTienIchXungQuanh(false); // Đóng modal tiện ích xung quanh
     setItemToDelete(null); // Xóa ID đã lưu
   };
 
- 
+
 
   useEffect(() => {
     const getData = async () => {
@@ -207,17 +219,15 @@ const TinhNang3 = () => {
     <div className={styles["tinhnang3-full-screen"]}>
       <div className={styles["tinhnang3-tabs"]}>
         <button
-          className={`${styles["tab-button"]} ${
-            activeTab === "tiennghi" ? styles["active"] : ""
-          }`}
+          className={`${styles["tab-button"]} ${activeTab === "tiennghi" ? styles["active"] : ""
+            }`}
           onClick={() => setActiveTab("tiennghi")}
         >
           Tiện Ích Xung Quanh
         </button>
         <button
-          className={`${styles["tab-button"]} ${
-            activeTab === "loaitiennghi" ? styles["active"] : ""
-          }`}
+          className={`${styles["tab-button"]} ${activeTab === "loaitiennghi" ? styles["active"] : ""
+            }`}
           onClick={() => setActiveTab("loaitiennghi")}
         >
           Loại Tiện Ích
@@ -259,7 +269,7 @@ const TinhNang3 = () => {
                 {selectedtype.length > 0 ? (
                   selectedtype.map((location, index) => (
                     <tr key={location.id}>
-                      <td>{index+1}</td>
+                      <td>{index + 1}</td>
                       <td>{location.tenTienIch}</td>
                       <td>{location.diaChi}</td>
                       <td>{location.TienIch?.tenTienIch}</td>
@@ -283,13 +293,13 @@ const TinhNang3 = () => {
               </tbody>
             </table>
             {isConfirmModalVisibleTienIchXungQuanh && (
-  <ConfirmModal
-    title="Xác nhận xóa"
-    message="Bạn có chắc chắn muốn xóa tiện ích xung quanh này?"
-    onConfirm={handleConfirmDeleteTienIchXungQuanh}
-    onCancel={handleCancelDeleteTienIchXungQuanh}
-  />
-)}
+              <ConfirmModal
+                title="Xác nhận xóa"
+                message="Bạn có chắc chắn muốn xóa tiện ích xung quanh này?"
+                onConfirm={handleConfirmDeleteTienIchXungQuanh}
+                onCancel={handleCancelDeleteTienIchXungQuanh}
+              />
+            )}
           </div>
 
           <div className={styles["tinhnang3-box-2"]}>
@@ -315,28 +325,32 @@ const TinhNang3 = () => {
                 placeholder="Nhập loại tiện ích"
               /> */}
 
-<div className={styles["form-group"]}>
-  <label>Loại</label>
-  <select
-    className={styles["form-select"]}
-    value={newTienIchLoai} // Liên kết với state riêng
-    onChange={(e) => {
-      const selectedValue = e.target.value;
-      setNewTienIchLoai(selectedValue); // Cập nhật state riêng
-      setNewTienIch({ ...newTienIch, loai: selectedValue }); // Cập nhật newTienIch.loai
-    }}
-  >
-    {locationsALL.length > 0 ? (
-      locationsALL.map((tienIch) => (
-        <option key={tienIch.id} value={tienIch.id}>
-          {tienIch.tenTienIch}
-        </option>
-      ))
-    ) : (
-      <option>Không có dữ liệu</option>
-    )}
-  </select>
-</div>
+              <div className={styles["form-group"]}>
+                <label>Loại</label>
+                <select
+                  className={styles["form-select"]}
+                  value={newTienIchLoai}
+                  onChange={(e) => {
+                    const selectedValue = e.target.value;
+                    setNewTienIchLoai(selectedValue);
+                    setNewTienIch({ ...newTienIch, loai: selectedValue });
+                  }}
+                >
+                  <option value="" disabled hidden>Chọn loại tiện ích</option>
+
+                  {locationsALL.length > 0 ? (
+                    locationsALL.map((tienIch) => (
+                      <option key={tienIch.id} value={tienIch.id}>
+                        {tienIch.tenTienIch}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>Không có dữ liệu</option>
+                  )}
+                </select>
+
+
+              </div>
 
               <InputField
                 label="Địa Chỉ"
@@ -414,13 +428,13 @@ const TinhNang3 = () => {
                 )}
               </tbody>
               {isConfirmModalVisibleTienIch && (
-  <ConfirmModal
-    title="Xác nhận xóa"
-    message="Bạn có chắc chắn muốn xóa loại tiện ích này?"
-    onConfirm={handleConfirmDeleteTienIch}
-    onCancel={handleCancelDeleteTienIch}
-  />
-)}
+                <ConfirmModal
+                  title="Xác nhận xóa"
+                  message="Bạn có chắc chắn muốn xóa loại tiện ích này?"
+                  onConfirm={handleConfirmDeleteTienIch}
+                  onCancel={handleCancelDeleteTienIch}
+                />
+              )}
 
 
             </table>

@@ -3,6 +3,7 @@
 .box-danhgia {
   display: flex;
   align-items: center;
+  
 }
 
 .box-danhgia p {
@@ -44,6 +45,8 @@
   display: flex;
   gap: 6px;
   margin-bottom: 10px;
+  
+  
 }
 
 .tab-btn {
@@ -179,6 +182,7 @@
   font-weight: 500;
   border: 0.5px solid white;
   width: 17%;
+  
 }
 
 .house-amenities-table .icon {
@@ -335,6 +339,8 @@
 /*đánh giá*/
 .danhgia {
   background-color: #eef3f9;
+  height: 200px;
+  overflow-y: auto;
 }
 
 .btn-primary {
@@ -363,5 +369,25 @@
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: manipulation;
+  /* touch-action: manipulation; */
+}
+
+.text-muted{
+  color: #2b9550 !important;
+}
+
+.amenities-scroll-wrapper {
+  /* max-height: 400px;  */
+  overflow-y: auto;
+  touch-action: pinch-zoom !important;
+}
+
+.house-image{
+  overflow-y: auto;
+  touch-action: pinch-zoom !important;
+}
+
+.house-danhgia{
+  overflow-y: auto;
+  touch-action: pinch-zoom !important;
 }

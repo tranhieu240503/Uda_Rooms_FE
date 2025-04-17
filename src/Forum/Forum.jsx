@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -12,6 +11,7 @@ import {
   faChevronDown,
   faSearch,
   faChevronUp,
+  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import classNames from "classnames/bind";
 import styles from "./Forum.module.scss";
@@ -19,6 +19,8 @@ import Image from "../CustomImage/CustomImage";
 import BackgroundImage from "../images/UDA_Background.jpg";
 import Avatar from "../images/avatar.jpg";
 import { useNavigate } from "react-router-dom";
+import { Carousel } from "react-responsive-carousel";
+
 import { ModalContext } from "../App";
 
 import Login from "../Login/Login";
@@ -56,7 +58,7 @@ const Forum = ({ onCloseForum }) => {
   const { showModal } = useContext(ModalContext);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
-
+  const [fullscreenImages, setFullscreenImages] = useState([]); // Hình ảnh cho chế độ toàn màn hình
   const [isConfirmCommentModalVisible, setIsConfirmCommentModalVisible] =
     useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
@@ -97,9 +99,12 @@ const Forum = ({ onCloseForum }) => {
 
   const handleImageClick = (imageUrl, id) => {
     console.log("Image Clicked:", imageUrl);
-    const postone = posts.find((post) => post.id === id);
-    console.log("Post Found:", postone.images);
-    setSelectedImage(imageUrl); // Lưu URL ảnh vào state
+    const post = posts.find((post) => post.id === id);
+    if (post && post.images) {
+      console.log("Post Found:", post.images);
+      setFullscreenImages(post.images.map((img) => `${API_URL}${img.image_url}`));  // Lưu danh sách URL hình ảnh
+      setSelectedImage(imageUrl); // Lưu URL ảnh hiện tại
+    }
   };
 
   // Thêm useEffect để lấy thông tin user từ token khi component mount
@@ -204,6 +209,14 @@ const Forum = ({ onCloseForum }) => {
   // Thêm hàm xử lý cho phần lọc
   const handleFilterTypeChange = (e) => {
     const value = e.target.value;
+    if (value === "Tất cả") {
+      setPosts(allPosts);
+    } else {
+      const filteredPosts = allPosts.filter(
+        (post) => post.loaiPost === value
+      );
+      setPosts(filteredPosts);
+    }
     setFilterType(value);
   };
   const handleCloseLogin = () => {
@@ -212,8 +225,8 @@ const Forum = ({ onCloseForum }) => {
   };
 
   const handleRemoveImage = (index) => {
-    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
-    setPostImages((prev) => prev.filter((_, i) => i !== index));
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index)); // Xóa hình ảnh khỏi `selectedImages`
+    setPostImages((prev) => prev.filter((_, i) => i !== index)); // Xóa hình ảnh khỏi `postImages`
   };
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files);
@@ -729,12 +742,12 @@ const Forum = ({ onCloseForum }) => {
                             <div key={index} className={cx("image-container")}>
                               <Image className={cx("img_post")} src={image} />
                               <button
-                                type="button"
-                                className={cx("remove-image-btn")}
-                                onClick={() => handleRemoveImage(image)}
-                              >
-                                <FontAwesomeIcon icon={faXmark} />
-                              </button>
+  type="button"
+  className={cx("remove-image-btn")}
+  onClick={() => handleRemoveImage(index)} 
+>
+  <FontAwesomeIcon icon={faXmark} />
+</button>
                             </div>
                           ))}
                         </div>
@@ -791,7 +804,7 @@ const Forum = ({ onCloseForum }) => {
                     icon={faChevronDown}
                   />
                   <div className={cx("list_inner")}>
-                    {["Tìm kiếm phòng trọ", "Chia sẻ phòng trọ", "Tất cả"].map(
+                    {["Tất cả","Tìm kiếm phòng trọ", "Chia sẻ phòng trọ"].map(
                       (item) => (
                         <label key={item} className={cx("inner_spacer")}>
                           <input
@@ -808,9 +821,7 @@ const Forum = ({ onCloseForum }) => {
                     )}
                   </div>
                 </div>
-                <button className={cx("search-btn")} onClick={handleSearch}>
-                  <FontAwesomeIcon icon={faSearch} className={cx("search")} />
-                </button>
+                
               </div>
               {/* Hiển thị thông báo nếu không có bài viết */}
               {Array.isArray(posts) && posts.length === 0 ? (
@@ -833,9 +844,15 @@ const Forum = ({ onCloseForum }) => {
                         }
                       />
                       <div className={cx("forum_inner-sub")}>
+                        <div className={cx("forum_type-post")}>
+
                         <h3 className={cx("forum-sub-heading")}>
                           {post.author?.fullname || "Người dùng ẩn danh"}
                         </h3>
+                        <p className={cx("forum-sub-type")}>
+                          {post.loaiPost || "Không xác định"}
+                        </p>
+                        </div>
                         <p className={cx("forum-sub-time")}>
                           {new Date(post.createdAt).toLocaleString()}
                         </p>
@@ -1025,7 +1042,7 @@ const Forum = ({ onCloseForum }) => {
         />
       )}
 
-      {selectedImage && (
+      {/* {selectedImage && (
         <div
           className={cx("image-fullscreen-overlay")}
           onClick={() => setSelectedImage(null)} // Đóng modal khi bấm vào overlay
@@ -1036,7 +1053,48 @@ const Forum = ({ onCloseForum }) => {
             className={cx("image-fullscreen")}
           />
         </div>
-      )}
+      )} */}
+   {selectedImage && (
+  <div
+    className={cx("image-fullscreen-overlay")}
+    onClick={() => setSelectedImage(null)} // Đóng modal khi bấm vào overlay
+  >
+    {/* Nút Prev chỉ hiển thị nếu không phải ảnh đầu tiên */}
+    {fullscreenImages.indexOf(selectedImage) > 0 && (
+      <button
+        className={cx("prev-btn")}
+        onClick={(e) => {
+          e.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
+          const currentIndex = fullscreenImages.indexOf(selectedImage);
+          const prevIndex = currentIndex - 1;
+          setSelectedImage(fullscreenImages[prevIndex]);
+        }}
+      >
+        <FontAwesomeIcon icon={faChevronLeft} />
+      </button>
+    )}
+    <img
+      src={selectedImage}
+      alt="Full Image"
+      className={cx("image-fullscreen")}
+    />
+    {/* Nút Next chỉ hiển thị nếu không phải ảnh cuối cùng */}
+    {fullscreenImages.indexOf(selectedImage) < fullscreenImages.length - 1 && (
+      <button
+        className={cx("next-btn")}
+        onClick={(e) => {
+          e.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
+          const currentIndex = fullscreenImages.indexOf(selectedImage);
+          const nextIndex = currentIndex + 1;
+          setSelectedImage(fullscreenImages[nextIndex]);
+        }}
+      >
+        <FontAwesomeIcon icon={faChevronRight} />
+      </button>
+    )}
+  </div>
+)}
+
     </>
   );
 };

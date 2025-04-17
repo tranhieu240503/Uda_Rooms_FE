@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import { addThongTinThem, addTienNghi, deleteThongTinThem, deleteTienNghi, fetchThongTinThem, fetchTienNghi } from "../../services/api";
 import styles from "./TinhNang2.module.scss"; // Import SCSS module
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
+import { ModalContext } from "../../App";
 
 const TinhNang2 = () => {
     const [tienNghiList, setTienNghiList] = useState([]);
@@ -10,6 +11,7 @@ const TinhNang2 = () => {
     const [newData, setNewData] = useState("");
     const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
+    const { showModal } = useContext(ModalContext);
 
     useEffect(() => {
         loadData();
@@ -33,7 +35,11 @@ const TinhNang2 = () => {
 
     const handleSubmit = async () => {
         if (!newData.trim()) {
-            alert("Vui lòng nhập thông tin!");
+            showModal(
+                "Lỗi khi thêm!",
+                "Vui lòng nhập đầy đủ thông tin.",
+                "error"
+              );
             return;
         }
         try {
@@ -45,6 +51,8 @@ const TinhNang2 = () => {
                 setThongTinThemList([...thongTinThemList, addedItem]);
             }
             setNewData("");
+            showModal("Thêm mới thành công!");
+
         } catch (error) {
             alert("Lỗi khi thêm dữ liệu!");
         }

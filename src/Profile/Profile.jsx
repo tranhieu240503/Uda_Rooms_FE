@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback, useContext } from "react"; // Thêm useCallback
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes, faCamera } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTimes,
+  faCamera,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 import classNames from "classnames/bind";
 import styles from "./Profile.module.scss";
 import { jwtDecode } from "jwt-decode";
@@ -8,6 +12,7 @@ import axios from "axios";
 import Image from "../CustomImage/CustomImage";
 import Avatar from "../images/avatar.jpg";
 import { ModalContext } from "../App";
+import ChangePassword from "../ChangePassword/ChangePassword";
 
 const cx = classNames.bind(styles);
 const API_URL = process.env.REACT_APP_API_URL;
@@ -27,10 +32,20 @@ const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
     gender: "",
   });
 
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
   const { showModal } = useContext(ModalContext);
+  const [fullImage, setFullImage] = useState(null);
+
+  const handleChangePasswordClick = () => {
+    setIsChangingPassword(true); // Hiển thị component đổi mật khẩu
+  };
+
+  const handleBackToProfile = () => {
+    setIsChangingPassword(false); // Quay lại trang thông tin cá nhân
+  };
 
   // Sử dụng useCallback để định nghĩa fetchUserData
   const fetchUserData = useCallback(async () => {
@@ -198,123 +213,201 @@ const Profile = ({ onCloseProfile, onAvatarUpdate }) => {
 
   return (
     <div className={cx("profile")}>
-      <header className={cx("header")}>
-        <h3 className={cx("heading")}>Thông tin cá nhân</h3>
-        <button className={cx("close")} onClick={onCloseProfile}>
-          <FontAwesomeIcon icon={faTimes} />
-        </button>
-      </header>
+      {isChangingPassword ? (
+        <ChangePassword onBack={handleBackToProfile} /> // Hiển thị component đổi mật khẩu
+      ) : (
+        <>
+          <header className={cx("header")}>
+            <h3 className={cx("heading")}>Thông tin cá nhân</h3>
+            <button className={cx("close")} onClick={onCloseProfile}>
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+          </header>
 
-      <div className={cx("content")}>
-        <div className={cx("avatar-section")}>
-          <div className={cx("avatar-container")}>
-            {imagePreview ? (
-              <Image
-                src={imagePreview}
-                alt="Profile Preview"
-                className={cx("avatar")}
-              />
-            ) : userData.avatar ? (
-              <>
-                {console.log(
-                  "URL ảnh trong frontend:",
-                  `${API_URL}${userData.avatar}`
+          <div className={cx("content")}>
+            <div className={cx("avatar-section")}>
+              {/* <div className={cx("avatar-container")}>
+                {imagePreview ? (
+                  <Image
+                    src={imagePreview}
+                    alt="Profile Preview"
+                    className={cx("avatar")}
+                  />
+                ) : userData.avatar ? (
+                  <>
+                    {console.log(
+                      "URL ảnh trong frontend:",
+                      `${API_URL}${userData.avatar}`
+                    )}
+                    <Image
+                      src={`${API_URL}/upload_avataruser/${userData.avatar}`}
+                      alt="Profile"
+                      className={cx("avatar")}
+                      onError={(e) => {
+                        console.log("Lỗi tải ảnh:", e);
+                        e.target.src = Avatar; // Hiển thị ảnh mặc định nếu không tải được
+                      }}
+                    />
+                  </>
+                ) : (
+                  <img
+                    src={`${userData.avatar}?t=${new Date().getTime()}`}
+                    alt="Avatar"
+                    className="avatar"
+                  />
                 )}
-                <Image
-                  src={`${API_URL}/upload_avataruser/${userData.avatar}`}
-                  alt="Profile"
-                  className={cx("avatar")}
-                  onError={(e) => {
-                    console.log("Lỗi tải ảnh:", e);
-                    e.target.src = Avatar; // Hiển thị ảnh mặc định nếu không tải được
-                  }}
-                />
-              </>
-            ) : (
-              <img
-                src={`${userData.avatar}?t=${new Date().getTime()}`}
-                alt="Avatar"
-                className="avatar"
-              />
-            )}
-            {isEditing && (
-              <label className={cx("avatar-upload")}>
-                <FontAwesomeIcon icon={faCamera} />
+                {isEditing && (
+                  <label className={cx("avatar-upload")}>
+                    <FontAwesomeIcon icon={faCamera} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className={cx("file-input")}
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                )}
+              </div> */}
+
+<div className={cx("avatar-container")}>
+  {imagePreview ? (
+    <Image
+      src={imagePreview}
+      alt="Profile Preview"
+      className={cx("avatar")}
+      onClick={() => setFullImage(imagePreview)} // Mở ảnh đầy đủ
+    />
+  ) : userData.avatar ? (
+    <Image
+      src={`${API_URL}/upload_avataruser/${userData.avatar}`}
+      alt="Profile"
+      className={cx("avatar")}
+      onClick={() => setFullImage(`${API_URL}/upload_avataruser/${userData.avatar}`)} // Mở ảnh đầy đủ
+      onError={(e) => {
+        e.target.src = Avatar; // Hiển thị ảnh mặc định nếu không tải được
+      }}
+    />
+  ) : (
+    <img
+      src={`${userData.avatar}?t=${new Date().getTime()}`}
+      alt="Avatar"
+      className="avatar"
+      onClick={() => setFullImage(`${userData.avatar}?t=${new Date().getTime()}`)} // Mở ảnh đầy đủ
+    />
+  )}
+  {isEditing && (
+    <label className={cx("avatar-upload")}>
+      <FontAwesomeIcon icon={faCamera} />
+      <input
+        type="file"
+        accept="image/*"
+        className={cx("file-input")}
+        onChange={handleImageChange}
+      />
+    </label>
+  )}
+</div>
+            </div>
+
+            <div className={cx("info-section")}>
+              <div className={cx("info-group")}>
+                <label>Họ và tên</label>
                 <input
-                  type="file"
-                  accept="image/*"
-                  className={cx("file-input")}
-                  onChange={handleImageChange}
+                  type="text"
+                  name="fullname"
+                  value={isEditing ? editedData.fullname : userData.fullname}
+                  onChange={handleInputChange}
+                  readOnly={!isEditing}
+                  maxLength="40"
                 />
-              </label>
-            )}
-          </div>
-        </div>
+              </div>
 
-        <div className={cx("info-section")}>
-          <div className={cx("info-group")}>
-            <label>Họ và tên</label>
-            <input
-              type="text"
-              name="fullname"
-              value={isEditing ? editedData.fullname : userData.fullname}
-              onChange={handleInputChange}
-              readOnly={!isEditing}
-              maxLength="40"
-            />
-          </div>
+              <div className={cx("info-group")}>
+                <label>Email</label>
+                <input type="email" value={userData.email} readOnly />
+              </div>
 
-          <div className={cx("info-group")}>
-            <label>Email</label>
-            <input type="email" value={userData.email} readOnly />
-          </div>
+              <div className={cx("info-group")}>
+                <label>Số điện thoại</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={isEditing ? editedData.phone : userData.phone}
+                  onChange={handleInputChange}
+                  readOnly={!isEditing}
+                />
+              </div>
 
-          <div className={cx("info-group")}>
-            <label>Số điện thoại</label>
-            <input
-              type="tel"
-              name="phone"
-              value={isEditing ? editedData.phone : userData.phone}
-              onChange={handleInputChange}
-              readOnly={!isEditing}
-            />
-          </div>
+              <div className={cx("info-group")}>
+                <label>Giới tính</label>
+                {isEditing ? (
+                  <select
+                    name="gender"
+                    value={editedData.gender}
+                    onChange={handleInputChange}
+                  >
+                    <option value="">Chọn giới tính</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                  </select>
+                ) : (
+                  <input type="text" value={userData.gender} readOnly />
+                )}
+              </div>
+            </div>
+            
 
-          <div className={cx("info-group")}>
-            <label>Giới tính</label>
+           
+                <div
+                  className={cx("info-change_password")}
+                  onClick={handleChangePasswordClick}
+                >
+                  <p className={cx("info-confirm_password")}>Đổi mật khẩu</p>
+                  <FontAwesomeIcon
+                    className={cx("info-right_password")}
+                    icon={faChevronRight}
+                  />
+                </div>
+             
+
             {isEditing ? (
-              <select
-                name="gender"
-                value={editedData.gender}
-                onChange={handleInputChange}
-              >
-                <option value="">Chọn giới tính</option>
-                <option value="Nam">Nam</option>
-                <option value="Nữ">Nữ</option>
-                <option value="Khác">Khác</option>
-              </select>
+              <div className={cx("button-group")}>
+                <button
+                  className={cx("save-button")}
+                  onClick={handleSaveChanges}
+                >
+                  Lưu thay đổi
+                </button>
+                <button
+                  className={cx("cancel-button")}
+                  onClick={handleCancelEdit}
+                >
+                  Hủy
+                </button>
+              </div>
             ) : (
-              <input type="text" value={userData.gender} readOnly />
+              <button className={cx("edit-button")} onClick={handleEditClick}>
+                Chỉnh sửa thông tin
+              </button>
             )}
           </div>
-        </div>
-
-        {isEditing ? (
-          <div className={cx("button-group")}>
-            <button className={cx("save-button")} onClick={handleSaveChanges}>
-              Lưu thay đổi
-            </button>
-            <button className={cx("cancel-button")} onClick={handleCancelEdit}>
-              Hủy
-            </button>
-          </div>
-        ) : (
-          <button className={cx("edit-button")} onClick={handleEditClick}>
-            Chỉnh sửa thông tin
-          </button>
-        )}
-      </div>
+        </>
+      )}
+      {fullImage && (
+  <div
+    className={cx("image-fullscreen-overlay")}
+    onClick={() => setFullImage(null)} // Đóng modal khi click
+  >
+    <img
+      src={fullImage}
+      alt="Full Image"
+      className={cx("image-fullscreen")}
+    />
+  </div>
+)}
     </div>
+    
   );
 };
 

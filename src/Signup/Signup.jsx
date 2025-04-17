@@ -86,37 +86,36 @@ export default function Signup({ onCloseSignup, onSwitchToLogin }) {
 
       console.log("Sending signup data:", signupData); // Debug log
 
-      const response = await postSignup(signupData);
-      console.log("Signup response:", response);
+      const signupResponse = await postSignup(signupData);
+      console.log("Signup response:", signupResponse);
 
-      if (response) {
-        // Show success message
-        handleClose(); // Close signup modal
-        // navigate("/"); // Redirect to home page
+      if (signupResponse) {
+        // Gọi API đăng nhập sau khi đăng ký thành công
+        const loginData = {
+          email: formData.email,
+          password: formData.password,
+        };
 
+        console.log("Logging in with:", loginData);
 
-        const response1 = await postLogin(signupData);
+        const loginResponse = await postLogin(loginData);
+        console.log("Login response:", loginResponse);
 
-
-        if (response1 && response1.token) {
-          // Save token to localStorage
-          localStorage.setItem("token", response1.token);
-          // Save user info if available
-          if (response1.user) {
-            localStorage.setItem("user", JSON.stringify(response1.user));
+        if (loginResponse && loginResponse.token) {
+          localStorage.setItem("token", loginResponse.token);
+          if (loginResponse.user) {
+            localStorage.setItem("user", JSON.stringify(loginResponse.user));
           }
 
-          // navigate("/"); // Redirect to filter page after login
+          // Hiển thị thông báo thành công
           showModal(
-            "Đăng ký thành công!",
-            "Bạn đã tạo tài khoản thành công. "
+            "Đăng ký và đăng nhập thành công!",
+            "Chào mừng bạn đến với UDA MAP."
           );
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000)
 
-        } else {
-          throw new Error("Đăng nhập không thành công");
+          // Chuyển hướng về trang chính
+          handleClose();
+          navigate("/");
         }
       }
     } catch (error) {
@@ -124,7 +123,7 @@ export default function Signup({ onCloseSignup, onSwitchToLogin }) {
       setErrors({
         submit:
           error.response?.data?.message ||
-          "Đăng ký thất bại. Vui lòng thử Email khác.",
+          "Đăng ký không thành công. Vui lòng thử lại.",
       });
     } finally {
       setIsLoading(false);

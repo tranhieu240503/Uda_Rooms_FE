@@ -117,7 +117,7 @@ const Map = ({ filteredData1, onCoordinatesr, onShowRouting }) => {
   const [filteredHouses, setFilteredHouses] = useState([]);
   const [tienIchList, setTienNghiList] = useState([]);
   const [showTienIch, setShowTienIch] = useState(true); // 👉 Trạng thái bật/tắt tiện ích
-
+  
   // Icon trường học
   const universityIcon = new L.Icon({
     iconUrl: "images/udalogo-removebg-preview.png",
@@ -205,6 +205,7 @@ const Map = ({ filteredData1, onCoordinatesr, onShowRouting }) => {
         zoom={14}
         scrollWheelZoom={true}
         fullscreenControl={true}
+        tap={false} // 👈 Thêm dòng này
         style={{ width: "100%", height: "100%" }}
       >
         <FlyToUniversity trigger={filteredData1} />

@@ -65,16 +65,16 @@ const Home = () => {
     setIsInnerVisible(true);
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsInnerVisible(window.innerWidth > 768); // Cập nhật khi thay đổi kích thước màn hình
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setIsInnerVisible(window.innerWidth > 768); // Cập nhật khi thay đổi kích thước màn hình
+  //   };
 
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  //   window.addEventListener("resize", handleResize);
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, []);
 
   return (
     <div className="home_wrapper">

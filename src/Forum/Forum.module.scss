@@ -23,6 +23,18 @@
   }
 }
 
+.forum_type-post{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.forum-sub-type{
+  margin-bottom:0rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
 .header_forum-main {
   background-color: var(--primary);
   display: flex;
@@ -144,7 +156,6 @@
 
 .forum-sub-heading {
   font-size: 1.4rem;
-  margin-top: 5px;
   font-weight: 600;
   margin-bottom: 0rem;
 }
@@ -810,6 +821,12 @@
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   cursor: pointer;
+  
+}
+
+.rotated-image {
+  transform: rotate(90deg);
+  object-fit: contain; /* Đảm bảo ảnh không bị méo */
 }
 
 .prev-btn,

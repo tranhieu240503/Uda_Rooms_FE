@@ -190,7 +190,7 @@ const TinhNang4 = () => {
             Chưa duyệt({locations.filter((loc) => loc.status === false).length})
           </button>
         </div>
-        <h1 className={styles["uda-tinhnang1-title"]}>DANH SÁCH NHÀ TRỌ</h1>
+        <h1 className={styles["uda-tinhnang1-title"]}>DANH SÁCH BÀI VIẾT</h1>
       </div>
       <div className={styles["uda-tinhnang1-table-wrapper"]}>
         <table className={styles["uda-tinhnang1-table"]}>

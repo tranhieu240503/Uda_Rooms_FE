@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSwipeable } from "react-swipeable";
 import { jwtDecode } from "jwt-decode";
-
 import {
   faMagnifyingGlass,
   faList,
@@ -12,6 +11,7 @@ import {
   faUserPlus,
   faSignOutAlt,
   faArrowLeft,
+  faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 import "../Header/Header.css";
 import Filter from "../../Filter/Filter";
@@ -41,6 +41,7 @@ const Header = ({
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [fullName, setFullName] = useState("");
   const [userAvatar, setUserAvatar] = useState(null);
+  const [userRole, setUserRole] = useState(""); // Thêm state để lưu vai trò người dùng
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true); // true: Login, false: Signup
@@ -59,6 +60,9 @@ const Header = ({
         const decodedUser = jwtDecode(token);
         setFullName(decodedUser.fullname);
         setUserAvatar(decodedUser.avatar);
+        setUserRole(String(decodedUser.role)); // Chuyển role thành chuỗi // Lưu vai trò người dùng
+        console.log("Decoded role:", decodedUser.role); // Kiểm tra giá trị role
+
         setIsLoggedIn(true);
         console.log("Decoded user:", decodedUser);
         console.log("userAvatar:", decodedUser.avatar);
@@ -93,24 +97,7 @@ const Header = ({
     window.location.reload();
   };
 
-  const handlers = useSwipeable({
-    onSwipedLeft: () => {
-      if (isInnerVisible && isMobile) {
-        onReset();
-      }
-    },
-    onSwipedRight: () => {
-      if (!isInnerVisible && isMobile) {
-        onInner();
-      }
-    },
-    preventDefaultTouchmoveEvent: true,
-    trackMouse: isMobile,
-    trackTouch: true,
-    delta: 50,
-    swipeDuration: 500,
-  });
-  const mobileProps = isMobile ? handlers : {};
+ 
 
   useEffect(() => {
     if (!isInnerVisible) {
@@ -182,7 +169,7 @@ const Header = ({
 
   return (
     <div
-      {...mobileProps}
+    
       className={`inner ${isInnerVisible ? "visible" : "hidden"}`}
     >
       <header className="header">
@@ -242,10 +229,18 @@ const Header = ({
                   )}
                   <span>{fullName || "Người dùng"}</span>
                 </li>
+                 {/* Hiển thị nút Trang Admin nếu vai trò là admin */}
+                 {userRole === "1" && (
+                  <li onClick={() => navigate("/admin")}>
+                    <FontAwesomeIcon icon={faUserShield} className="menu-icon" />
+                    <span>Quản lý</span>
+                  </li>
+                )}
                 <li onClick={handleLogout}>
                   <FontAwesomeIcon icon={faSignOutAlt} className="menu-icon" />
                   <span>Đăng xuất</span>
                 </li>
+               
               </>
             )}
             <li onClick={() => handleContentChange("Survey")}>
@@ -256,8 +251,6 @@ const Header = ({
               <FontAwesomeIcon icon={faComments} className="menu-icon" />
               <span>Diễn đàn</span>
             </li>
-
-
           </ul>
         </div>
       </header>

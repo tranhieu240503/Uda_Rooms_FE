@@ -25,6 +25,24 @@
   justify-content: space-around;
 }
 
+.uda-back-button {
+  border: none;
+  padding: 1px 12px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  border: 1px solid #fff;
+  text-align: center;
+  color: #fff;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  background: #198c41;
+
+}
+
+.uda-back-button:hover {
+  background-color: #0056b3;
+}
+
 /* Layout chính */
 .uda-main {
   display: flex;

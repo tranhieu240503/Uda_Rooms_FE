@@ -1,8 +1,8 @@
 .chinhsuachitiet-edit-container {
   display: flex;
-  flex-wrap: wrap;
-  /* justify-content: center; */
-  gap: 20px;
+  // flex-wrap: wrap;
+  justify-content: space-around; 
+  gap: 10px;
   /* padding: 20px; */
   background: #f9f9f9;
   border-radius: 8px;
@@ -99,7 +99,7 @@
 .tiennghi-container,
 .thongtinthem-container {
   display: grid;
-  grid-template-columns: repeat(4, 0.5fr);
+  grid-template-columns: repeat(3, 0.5fr);
   gap: 1px;
   width: 72%;
   margin: 0 auto;
@@ -114,8 +114,9 @@
 }
 
 .update-btn {
-  padding: 7px 19px;
-  font-size: 1.1rem;
+  padding: 5px 15px;
+  font-size: 1.3rem;
+  font-weight: bold;
   display: flex;
   text-align: center;
   justify-content: center;
@@ -154,8 +155,9 @@
   background: rgba(255, 0, 0, 0.8);
   color: white;
   border: none;
-  padding: 7px 12px; /* Điều chỉnh kích thước nút */
-  font-size: 11px; /* Tăng kích thước chữ */
+  padding: 5px 10px; /* Điều chỉnh kích thước nút */
+  font-size: 1.1rem;
+  font-weight: bold;  
   cursor: pointer;
   border-radius: 5px;
   transition: 0.3s;
@@ -189,4 +191,116 @@
 .available:hover {
   opacity: 0.8;
   cursor: pointer;  /* Đảm bảo con trỏ là bàn tay khi hover */
+}
+
+//thêm hình ảnh
+.file-input-label {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.form_group {
+  position: relative;
+  margin: 9px 0;
+}
+
+.form_input {
+  width: 100%;
+  padding: 4.5px 10px;
+  font-size: 1.7rem;
+  border: none;
+  border: 1px solid #ccc;
+  outline: none;
+  background: transparent;
+  margin: 2px 0 2px 0;
+  border-radius: 8px;
+  height: 35px;
+}
+
+.file-input-label {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.file-input {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+.file-input-text {
+  display: flex;
+  padding: 3px 10px;
+  font-size: 1.7rem;
+  border: 1px solid #ccc;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  gap: 12px;
+  color: #99a9c2;
+  background: transparent;
+
+  &:hover {
+    border-color: #00b63e;
+  }
+}
+
+/*hiện hình đã chọn*/
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  /* Cho phép ảnh xuống dòng nếu quá nhiều */
+  gap: 10px;
+  /* Khoảng cách giữa các ảnh */
+  margin-top: 10px;
+}
+.preview-item {
+  position: relative;
+  display: inline-block;
+}
+
+.preview-image {
+  width: 100px;
+  /* Giới hạn kích thước ảnh */
+  height: 100px;
+  object-fit: cover;
+  /* Cắt ảnh để vừa khung mà không bị méo */
+  border-radius: 8px;
+  /* Bo góc ảnh */
+  border: 2px solid #ddd;
+  /* Viền nhẹ */
+  transition: transform 0.2s ease-in-out;
+}
+
+.preview-image:hover {
+  /* Hiệu ứng phóng to khi hover */
+  border-color: #007bff;
+  /* Viền đổi màu khi hover */
+}
+
+.delete-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-button:hover {
+  color: red;
 }

@@ -45,7 +45,8 @@
 .feature-add-btn {
   width: 100%;
   padding: 4px 1px;
-  background: #28a745;
+  font-weight: bold;
+  background: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
@@ -53,7 +54,7 @@
 }
 
 .feature-add-btn:hover {
-  background: #198c41;
+  background: #025bba;
 }
 
 .feature-list {

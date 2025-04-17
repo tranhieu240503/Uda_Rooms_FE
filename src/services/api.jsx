@@ -330,7 +330,7 @@ export const DeleteImage = async (nhaTroId, hinhAnh) => {
 
     const data = await response.json();
     if (response.ok) {
-      alert("Xóa ảnh thành công!");
+      
     } else {
       alert(data.error);
     }

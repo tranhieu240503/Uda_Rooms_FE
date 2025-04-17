@@ -20,7 +20,7 @@ const TinhNang1 = () => {
   const [locations, setLocations] = useState([]);
   const [locationsFind, setLocationsFind] = useState([]);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
-  const [locationToDelete, setLocationToDelete] = useState(null); 
+  const [locationToDelete, setLocationToDelete] = useState(null);
   const [onfix, setOnFix] = useState(null);
   const [statusFix, setStatusFix] = useState(false);
   const selectedLocation = locations.find((location) => location.id === onfix);
@@ -51,9 +51,9 @@ const TinhNang1 = () => {
         }
         if (selectedId !== "") {
           const booleanFindId = selectedId === "true" ? true : selectedId === "false" ? false : selectedId;
-  
+
           updatedLocations = updatedLocations.filter((loc) => loc.conPhong === booleanFindId);
-    
+
         }
         setFilteredLocations(updatedLocations);
       }
@@ -61,18 +61,18 @@ const TinhNang1 = () => {
       console.error("Lỗi khi duyệt hoặc hủy duyệt nhà trọ:", error);
     }
   };
- 
+
   const handleSearch = (event) => {
     const term = event.target.value.toLowerCase();
-    const filtered = locations.filter(loc => 
+    const filtered = locations.filter(loc =>
       loc.sdt.toLowerCase().includes(term) ||
       loc.diaChi.toLowerCase().includes(term)
     );
-    
+
     console.log(filtered);
     setFilteredLocations(filtered);
   };
-  
+
   const handleChange = (event) => {
     const findid = event.target.value;
     console.log(findid);
@@ -88,7 +88,7 @@ const TinhNang1 = () => {
     if (findid !== "") {
       // Kiểm tra xem findid có phải là "true" hoặc "false" không
       const booleanFindId = findid === "true" ? true : findid === "false" ? false : findid;
-  
+
       // Lọc các locations theo giá trị boolean của loaiPost
       filtered = filtered.filter((loc) => loc.conPhong === booleanFindId);
     }
@@ -96,62 +96,62 @@ const TinhNang1 = () => {
     setFilteredLocations(filtered);
   };
 
-//  const xoaNhaTro = async (id) => {
-//      if (!window.confirm("Bạn có chắc chắn muốn xóa trọ này này?")) return;
- 
-//      try {
-//        const response = await deleteNhaTro(id);
-//        if (response && response.status === 200) {
-//          let updatedLocations = await fetchLocations();
-//          setLocations(updatedLocations);
- 
-//          if (activeButton !== "all") {
-//            updatedLocations = updatedLocations.filter(
-//             (loc) => loc.trangThai === (activeButton === "approved" ? 1 : 0)
-//           );
-//          }
-//          if (selectedId !== "") {
-//           const booleanFindId = selectedId === "true" ? true : selectedId === "false" ? false : selectedId;
-  
-//           updatedLocations = updatedLocations.filter((loc) => loc.conPhong === booleanFindId);
-//          }
-//          setFilteredLocations(updatedLocations);
-//        }
-//      } catch (error) {
-//        console.error("Lỗi khi xóa:", error);
-//      }
-//    };
+  //  const xoaNhaTro = async (id) => {
+  //      if (!window.confirm("Bạn có chắc chắn muốn xóa trọ này này?")) return;
 
-const xoaNhaTro = async (id) => {
-  try {
-    const response = await deleteNhaTro(id);
-    if (response && response.status === 200) {
-      let updatedLocations = await fetchLocations();
-      setLocations(updatedLocations);
-      setFilteredLocations(updatedLocations);
+  //      try {
+  //        const response = await deleteNhaTro(id);
+  //        if (response && response.status === 200) {
+  //          let updatedLocations = await fetchLocations();
+  //          setLocations(updatedLocations);
+
+  //          if (activeButton !== "all") {
+  //            updatedLocations = updatedLocations.filter(
+  //             (loc) => loc.trangThai === (activeButton === "approved" ? 1 : 0)
+  //           );
+  //          }
+  //          if (selectedId !== "") {
+  //           const booleanFindId = selectedId === "true" ? true : selectedId === "false" ? false : selectedId;
+
+  //           updatedLocations = updatedLocations.filter((loc) => loc.conPhong === booleanFindId);
+  //          }
+  //          setFilteredLocations(updatedLocations);
+  //        }
+  //      } catch (error) {
+  //        console.error("Lỗi khi xóa:", error);
+  //      }
+  //    };
+
+  const xoaNhaTro = async (id) => {
+    try {
+      const response = await deleteNhaTro(id);
+      if (response && response.status === 200) {
+        let updatedLocations = await fetchLocations();
+        setLocations(updatedLocations);
+        setFilteredLocations(updatedLocations);
+      }
+    } catch (error) {
+      console.error("Lỗi khi xóa:", error);
     }
-  } catch (error) {
-    console.error("Lỗi khi xóa:", error);
-  }
-};
+  };
 
-const handleDeleteClick = (id) => {
-  setLocationToDelete(id);
-  setIsConfirmModalVisible(true); // Hiển thị ConfirmModal
-};
+  const handleDeleteClick = (id) => {
+    setLocationToDelete(id);
+    setIsConfirmModalVisible(true); // Hiển thị ConfirmModal
+  };
 
-const handleConfirmDelete = () => {
-  if (locationToDelete) {
-    xoaNhaTro(locationToDelete);
-  }
-  setIsConfirmModalVisible(false); // Đóng ConfirmModal
-  setLocationToDelete(null); // Xóa ID đã lưu
-};
+  const handleConfirmDelete = () => {
+    if (locationToDelete) {
+      xoaNhaTro(locationToDelete);
+    }
+    setIsConfirmModalVisible(false); // Đóng ConfirmModal
+    setLocationToDelete(null); // Xóa ID đã lưu
+  };
 
-const handleCancelDelete = () => {
-  setIsConfirmModalVisible(false); // Đóng ConfirmModal
-  setLocationToDelete(null); // Xóa ID đã lưu
-};
+  const handleCancelDelete = () => {
+    setIsConfirmModalVisible(false); // Đóng ConfirmModal
+    setLocationToDelete(null); // Xóa ID đã lưu
+  };
 
 
   const handleHienChiTiet = (id) => {
@@ -162,16 +162,16 @@ const handleCancelDelete = () => {
 
   const handleAnChiTiet = async (id) => {
     try {
-     
-  
-        const updatedLocations = await fetchLocations();
-    
-        setFilteredLocations(updatedLocations);
-        setLocations(updatedLocations);
-        setStatusFix(false);
-        setOnFix(null);
-      }
-     catch (error) {
+
+
+      const updatedLocations = await fetchLocations();
+
+      setFilteredLocations(updatedLocations);
+      setLocations(updatedLocations);
+      setStatusFix(false);
+      setOnFix(null);
+    }
+    catch (error) {
       console.error("Lỗi khi duyệt hoặc hủy duyệt nhà trọ:", error);
     }
   };
@@ -219,15 +219,15 @@ const handleCancelDelete = () => {
           </button>
         </div>
         <h1 className={styles["uda-tinhnang1-title"]}>DANH SÁCH NHÀ TRỌ</h1>
-       <div className={styles["search-input"]}>
-       <input
-        type="text"
-        placeholder="Nhập số điện thoại hoặc địa chỉ..."       
-         // value={searchTerm}
-        onChange={handleSearch}  // Gọi hàm khi người dùng gõ
-      />
-        <FontAwesomeIcon className={styles["icon_search"]} icon={faSearch} />
-       </div>
+        <div className={styles["search-input"]}>
+          <input
+            type="text"
+            placeholder="Nhập số điện thoại hoặc địa chỉ..."
+            // value={searchTerm}
+            onChange={handleSearch}  // Gọi hàm khi người dùng gõ
+          />
+          <FontAwesomeIcon className={styles["icon_search"]} icon={faSearch} />
+        </div>
       </div>
       <div className={styles["uda-tinhnang1-table-wrapper"]}>
         <table className={styles["uda-tinhnang1-table"]}>
@@ -238,17 +238,17 @@ const handleCancelDelete = () => {
               <th>Địa chỉ</th>
               <th>Chủ nhà</th>
               <th>Sdt</th>
-             <th>
+              <th>
 
-             <div className={styles["select-wrapper"]}>
+                <div className={styles["select-wrapper"]}>
                   <select value={selectedId} onChange={handleChange}>
                     <option value="">Tất cả</option>
                     <option value="true">Còn phòng</option>
                     <option value="false">Hết phòng</option>
                   </select>
                 </div>
-             
-             </th>
+
+              </th>
               <th>mã sv</th>
 
 
@@ -257,29 +257,19 @@ const handleCancelDelete = () => {
           </thead>
           <tbody>
             {statusFix && selectedLocation ? (
-              <tr>
+              <tr className={statusFix ? styles["tr-selected"] : ""}> {/* Thêm lớp tùy thuộc vào statusFix */}
                 <td>{selectedLocation.id}</td>
                 <td>{selectedLocation.tenNhaTro}</td>
                 <td>{selectedLocation.diaChi}</td>
                 <td>{selectedLocation.tenChuNha}</td>
                 <td>{selectedLocation.sdt}</td>
                 <td>{selectedLocation.conPhong ? "Còn phòng" : "Hết phòng"}</td>
-                <td>{selectedLocation.nguoiGioiThieu ?truncateText(selectedLocation.nguoiGioiThieu, 5): "ẩn danh"}</td>
+                <td>{selectedLocation.nguoiGioiThieu ? truncateText(selectedLocation.nguoiGioiThieu, 5) : "ẩn danh"}</td>
 
                 <td>
                   <div className={styles["o-tuy-chinh"]}>
-                    {/* <button
-                      className={`${styles["uda-tinhnang1-button"]} ${
-                        selectedLocation.trangThai === 0
-                          ? styles["uda-success"]
-                          : styles["uda-danger"]
-                      }`}
-                      onClick={() => handleDuyet(selectedLocation.id)}
-                    >
-                      {selectedLocation.trangThai === 0 ? "Duyệt" : "Hủy duyệt"}
-                    </button> */}
                     <button
-                      className={`${styles["uda-tinhnang1-button"]} ${styles["uda-danger"]}`}
+                      className={`${styles["uda-tinhnang1-button-out"]} ${styles["uda-danger"]}`}
                       onClick={handleAnChiTiet}
                     >
                       Thoát chỉnh sửa
@@ -296,19 +286,19 @@ const handleCancelDelete = () => {
                   <td>{location.tenChuNha}</td>
                   <td>{location.sdt}</td>
                   <td>{location.conPhong ? "Còn phòng" : "Hết phòng"}</td>
-                  <td>{location.nguoiGioiThieu ?truncateText(location.nguoiGioiThieu, 5): "ẩn danh"}</td>
+                  <td>{location.nguoiGioiThieu ? truncateText(location.nguoiGioiThieu, 5) : "ẩn danh"}</td>
 
 
                   <td>
                     <div className={styles["o-tuy-chinh-2"]}>
                       <button
                         className={`${styles["uda-tinhnang1-button"]} ${location.trangThai === 0
-                            ? styles["uda-success"]
-                            : styles["uda-danger"]
+                          ? styles["uda-success"]
+                          : styles["uda-danger"]
                           }`}
                         onClick={() => handleDuyet(location.id)}
                       >
-                        {location.trangThai === 0 ? "Duyệt" : "Bỏ duyệt"}
+                        {location.trangThai === 0 ? "Duyệt" : "Hủy"}
                       </button>
                       <button
                         className={`${styles["uda-tinhnang1-button"]} ${styles["uda-edit"]}`}
