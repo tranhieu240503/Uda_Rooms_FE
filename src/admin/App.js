@@ -9,6 +9,10 @@ import TinhNang3 from "./Tinhnang3/TinhNang3"; // Đảm bảo tên thư mục v
 import TinhNang4 from "./Tinhnang4/TinhNang4"; // Đảm bảo tên thư mục và file chính xác
 import TinhNang5 from "./Tinhnang5/TinhNang5";
 
+// Hàm xử lý sự kiện quay lại
+
+
+
 const App = () => {
   const [activeFeature, setActiveFeature] = useState(1);
   const navigate = useNavigate();
@@ -16,7 +20,16 @@ const App = () => {
     <div className={styles["uda-container"]}>
       {/* Header */}
       <header className={styles["uda-header"]}>
+        <div   className={styles["uda-logo"]}    onClick={() => navigate("/")}>
+          <img
+            src="./images/UDA_Logo.png"
+            alt="Logo"
+            className={styles["uda-logo-image"]}
+          />
+
         <h1 className={styles["uda-title"]}> UDA MAP</h1>
+          </div>
+
 
         <nav className={styles["uda-sidebar"]}>
           <button

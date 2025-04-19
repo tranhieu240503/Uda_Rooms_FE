@@ -4,7 +4,7 @@ import {
   fetchLocations,
   handleDuyetAPI,
 } from "../../services/api";
-import Chinhsuachitiet from "../chinhsuachinh/chinhsuachitiet";
+import Chinhsuachitiet from "../chinhsuachitiet/chinhsuachitiet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./Tinhnang1.module.scss"; // Import SCSS module
 import { faSearch } from "@fortawesome/free-solid-svg-icons";

@@ -92,3 +92,14 @@
   overflow-y: auto;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
 }
+
+.uda-logo{
+display: flex;
+align-items: center;
+cursor: pointer;
+}
+
+.uda-logo-image{
+  width: 50px;
+  margin-right: 10px;
+}
